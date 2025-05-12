@@ -8,7 +8,7 @@ An Android app facilitating practise of Afro-Cuban percussion instruments throug
 The app functions through a low-latency C++ backend connected to a UI written in Jetpack Compose. Low latency audio is achieved through Google's Oboe library.
 
 ## User Instructions:
-Download the [percussionpro.apk](https://github.com/k-b-2/PercussionPro/blob/main/percussionpro.apk) from the repository to your Android device. From there, install the app and allow permission to use the microphone once opened.
+Download the [percussionpro.apk](https://github.com/ph22432/PercussionPro/blob/main/percussionpro.apk) from the repository to your Android device. From there, install the app and allow permission to use the microphone once opened.
 
 ## Developer Instructions:
 
