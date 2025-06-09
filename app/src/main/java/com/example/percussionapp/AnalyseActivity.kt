@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.percussionapp.ui.theme.PercussionAppTheme
+import java.io.File
 
 class AnalyseActivity : ComponentActivity() {
     private val recorderView = AudioEngineViewModel()
@@ -68,13 +69,16 @@ fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()
     val spectrogram by remember{
         mutableStateOf(
             //200 columns visible on the screen at one time. 100 is a placeholder value
-            MutableList(200) { List(arraySize) { 100.0 } }
+            MutableList(200) { List(arraySize) { 200.0 } }
         )
     }
 
     //when the spectrum is updated, remove the leftmost column from the spectrogram and add the newest one
     LaunchedEffect(frequencySpectrum){
         val processedWave = getLogFrequencies(frequencySpectrum ,arraySize)
+
+        //val fileContent = File("res/raw/wave.txt").readText()
+        //println(fileContent)
         spectrogram.removeAt(0)
         spectrogram.add(processedWave.toList())
     }

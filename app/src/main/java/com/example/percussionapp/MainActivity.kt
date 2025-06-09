@@ -28,6 +28,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import com.example.percussionapp.ui.theme.PercussionAppTheme
 import com.example.percussionapp.ui.theme.VeryLightOrange
+import android.content.Context
+import java.io.File
+import java.io.FileOutputStream
 
 const val SHEET_MUSIC_HEIGHT = 0.6f
 
@@ -80,6 +83,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Menu() {
+
     val activityContext = LocalContext.current
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

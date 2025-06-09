@@ -3,7 +3,8 @@ package com.example.percussionapp
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createScaledBitmap
 import androidx.core.graphics.rotationMatrix
-import kotlin.math.log
+//import kotlin.math.log
+import kotlin.math.*
 
 //converts 2d array to spectrogram, encoding values as colours
 fun createScaledSpectrogramBitmap(spectrogram: List<List<Double>>,canvasWidth: Float, canvasHeight: Float): Bitmap {
@@ -43,12 +44,23 @@ fun rotateBitmap(original : Bitmap, degrees: Float) : Bitmap {
 
 //stretches array by logarithmic scale
 fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
-    val logScaleFactor = (listSize) / log(waveform.size.toDouble(), 10.0)
+    val logScaleFactor = ((listSize) / log(waveform.size.toDouble(), 10.0)) * 2
+    //println(logScaleFactor)
     var currentIndex = 1
     var currentLogIndex : Double = log((currentIndex + 1.0), 10.0) * logScaleFactor
     val processedWave = MutableList(listSize){0.0}
+    val base: Double = 60.00
+    var biggestFreq : Double = 0.00
+    var biggestIndex : Int = 0
     for (i in 0..<processedWave.size - 1){
-        processedWave[i] = waveform[currentIndex - 1]
+        processedWave[i] = max(base, waveform[currentIndex -1])-base
+        if (biggestFreq < waveform[currentIndex -1]) {
+            biggestFreq = waveform[currentIndex -1]
+            biggestIndex = currentIndex
+        }
+        //if (processedWave[i] > 4E30) {
+        //    println(processedWave[i])
+        //}
         if (currentLogIndex <= i) {
             currentIndex++
             currentLogIndex = log(
@@ -57,5 +69,11 @@ fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
             ) * logScaleFactor
         }
     }
+    if (biggestIndex > 1) {
+        println(biggestIndex)
+        println(biggestFreq)
+    }
+
+
     return processedWave
 }

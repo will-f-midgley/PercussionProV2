@@ -78,8 +78,8 @@ namespace percussionapp {
             //if time to next miss has passed, inform the UI and update the pattern event
             if (currentTimeFromPatternStart > nextMissMs) {
 
-                LOG("%lld ",currentTimeFromPatternStart);
-                LOG("SKIP at %d!", (int) nextMissMs);
+                //LOG("%lld ",currentTimeFromPatternStart);
+                //LOG("SKIP at %d!", (int) nextMissMs);
 
                 //-2 = SKIP
                 audioHandler->onSound(-2);
