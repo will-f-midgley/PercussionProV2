@@ -49,7 +49,7 @@ fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
     var currentIndex = 1
     var currentLogIndex : Double = log((currentIndex + 1.0), 10.0) * logScaleFactor
     val processedWave = MutableList(listSize){0.0}
-
+    var notePlayed : Boolean = false
 
     // Used to filter unnecessary noise
     var biggestFreq : Double = 10.00
@@ -62,6 +62,7 @@ fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
 
         processedWave[i] = max(base, waveform[currentIndex -1])-base
         temp = processedWave[i]
+        if (temp > 0.0) {notePlayed = true}
         //if (temp > 0.0 && temp < 99999) {println("$i\t $currentIndex - $temp")}
         //if (temp > 200 && temp < 999999) {
         //    println("$i - $temp")
@@ -74,7 +75,7 @@ fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
         //    println(processedWave[i])
         //}
         if (currentLogIndex <= i) {
-            if (temp < 99999) {println("$currentIndex - $temp")}
+            if (temp < 99999 && notePlayed && temp > 200) {println("$currentIndex - $temp")}
             currentIndex++
             currentLogIndex = log(
                 (currentIndex.toDouble()),
@@ -94,7 +95,7 @@ fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
     } else if (biggestFreq > 20 && biggestFreq < 999999999) {
         //println("Unknown - $biggestIndex of $biggestFreq")
     }
-
+    if (notePlayed) {println("-------------------------")}
 
     return processedWave
 }
