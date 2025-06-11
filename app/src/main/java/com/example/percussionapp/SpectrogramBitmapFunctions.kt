@@ -45,7 +45,7 @@ fun rotateBitmap(original : Bitmap, degrees: Float) : Bitmap {
 //stretches array by logarithmic scale
 fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
     val logScaleFactor = ((listSize) / log(waveform.size.toDouble(), 10.0)) * 2
-    //println(logScaleFactor)
+    //println(waveform.size)
     var currentIndex = 1
     var currentLogIndex : Double = log((currentIndex + 1.0), 10.0) * logScaleFactor
     val processedWave = MutableList(listSize){0.0}
@@ -56,8 +56,16 @@ fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
     var biggestIndex : Int = 0
     val base: Double = 60.00
     //60.00
+    var temp : Double = 0.0
     for (i in 0..<processedWave.size - 1){
+
+
         processedWave[i] = max(base, waveform[currentIndex -1])-base
+        temp = processedWave[i]
+        //if (temp > 0.0 && temp < 99999) {println("$i\t $currentIndex - $temp")}
+        //if (temp > 200 && temp < 999999) {
+        //    println("$i - $temp")
+        //}
         if (biggestFreq < waveform[currentIndex -1]) {
             biggestFreq = waveform[currentIndex -1]
             biggestIndex = currentIndex
@@ -66,6 +74,7 @@ fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
         //    println(processedWave[i])
         //}
         if (currentLogIndex <= i) {
+            if (temp < 99999) {println("$currentIndex - $temp")}
             currentIndex++
             currentLogIndex = log(
                 (currentIndex.toDouble()),
@@ -73,13 +82,17 @@ fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
             ) * logScaleFactor
         }
     }
+    //for (i in 0..28) {
+        //println(waveform[i])
+    //}
     if (biggestIndex > 1 && biggestIndex < 7 && biggestFreq > 400 && biggestFreq < 99999999) {
         //println(biggestIndex)
         //println(biggestFreq)
-        println("bass - $biggestIndex of $biggestFreq")
-    } else if ((biggestIndex == 18 || biggestIndex == 19) && biggestFreq > 350 && biggestFreq < 999999999) {
-        println("Slap - $biggestIndex of $biggestFreq")
-
+        //println("bass - $biggestIndex of $biggestFreq")
+    //} else if ((biggestIndex == 18 || biggestIndex == 19) && biggestFreq > 350 && biggestFreq < 999999999) {
+    //    println("Slap - $biggestIndex of $biggestFreq")
+    } else if (biggestFreq > 20 && biggestFreq < 999999999) {
+        //println("Unknown - $biggestIndex of $biggestFreq")
     }
 
 
