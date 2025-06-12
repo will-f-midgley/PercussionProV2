@@ -243,6 +243,19 @@ fun PercussionStave(barProgress: Float, bar1Image: Int,notesPlayed:Int,currentNo
     }
 }
 
+@Composable
+fun WaveFormPeaks(waveform: DoubleArray) {
+    var prev1 : Double = 0.0
+    var prev2 : Double = 0.0
+    for (i in 1..<waveform.size - 1) {
+        if (prev2 > prev1 && prev2 > waveform[i] && prev2 > 350 && prev2 < 9999999 && i < 40) {
+            println(prev2)
+        }
+        prev1 = prev2
+        prev2 = waveform[i]
+    }
+}
+
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
@@ -252,6 +265,7 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
     var canvasWidth by remember { mutableFloatStateOf(10f) }
     var canvasHeight by remember { mutableFloatStateOf(10f) }
     SpectrogramUpdate(waveform,spectrogramOn,notesPlayed,currentNote,lastSpectrogramBitmap,currentSpectrogramBitmap, canvasWidth, canvasHeight)
+
     Canvas(
         modifier = Modifier.fillMaxSize().padding(20.dp).padding(top = 50.dp)
             /*.background(Color.hsv(300f, 0.1f, 0.85f))*/.graphicsLayer()
@@ -266,8 +280,33 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
 
             val windowSize = size.width / (log((waveformSize - 1).toDouble(), 10.0) * 2)
             //draw small frequency display in bottom left, each value is increased by log scale
+            val peaks = mutableSetOf<Int>()
+            var prev1 : Double = 0.0
+            var prev2 : Double = 0.0
+            var biggestPeak : Double = 0.0
+            var biggestBin = -1
+            for (i in 1..(waveform.size - 1)) {
+                //println(i)
+                if (prev2 > prev1 && prev2 > waveform[i] && prev2 > 90 && prev2 < 9999) {
+                    peaks.add(i-1)
+                    if (prev2 > biggestPeak) {
+                        biggestPeak = prev2
+                        biggestBin = i-1
+                    }
+                }
+                prev1 = prev2
+                prev2 = waveform[i]
+            }
+            if (peaks.size > 0) {
+                println("$peaks - Biggest bin = $biggestBin at $biggestPeak")
+
+            }
+
             for (i in 1..<waveformSize - 1) {
-                if (waveform[i] > 200 && waveform[i] < 9999999) {println(waveform[i])}
+                var tempColor = Color.Red
+                if (peaks.contains(i)) {
+                    tempColor = Color.Green
+                }
                 drawLine(
                     //start = Offset(x = (canvasWidth/(waveformSize - 1)) * i, y = (canvasHeight - (waveform[i] * 10)).toFloat()),
                     start = Offset(
@@ -283,7 +322,7 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                     ),
 
                     strokeWidth = 4.0f,
-                    color = Color.Blue
+                    color = tempColor
                 )
             }
 
