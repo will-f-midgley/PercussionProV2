@@ -43,9 +43,10 @@ fun rotateBitmap(original : Bitmap, degrees: Float) : Bitmap {
 }
 
 //stretches array by logarithmic scale
-fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
+fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : Pair<List<Double>, MutableSet<String>>{
     val logScaleFactor = ((listSize) / log(waveform.size.toDouble(), 10.0)) * 2
     //println(waveform.size)
+    val setTest = mutableSetOf<String>()
     var currentIndex = 1
     var currentLogIndex : Double = log((currentIndex + 1.0), 10.0) * logScaleFactor
     val processedWave = MutableList(listSize){0.0}
@@ -75,7 +76,10 @@ fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
         //    println(processedWave[i])
         //}
         if (currentLogIndex <= i) {
-            if (temp < 99999 && notePlayed && temp > 200) {println("$currentIndex - $temp")}
+            if (temp < 99999 && temp > 100) {
+                //println("$currentIndex - $temp")
+                setTest.add("$currentIndex - $temp")
+            }
             currentIndex++
             currentLogIndex = log(
                 (currentIndex.toDouble()),
@@ -83,6 +87,8 @@ fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
             ) * logScaleFactor
         }
     }
+    println(setTest.size)
+    if (!(setTest.size == 0)) {println(setTest)}
     //for (i in 0..28) {
         //println(waveform[i])
     //}
@@ -95,7 +101,6 @@ fun getLogFrequencies(waveform: DoubleArray, listSize : Int) : List<Double>{
     } else if (biggestFreq > 20 && biggestFreq < 999999999) {
         //println("Unknown - $biggestIndex of $biggestFreq")
     }
-    if (notePlayed) {println("-------------------------")}
 
-    return processedWave
+    return processedWave to setTest
 }

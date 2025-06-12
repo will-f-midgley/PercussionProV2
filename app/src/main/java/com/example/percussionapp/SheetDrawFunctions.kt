@@ -267,6 +267,7 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
             val windowSize = size.width / (log((waveformSize - 1).toDouble(), 10.0) * 2)
             //draw small frequency display in bottom left, each value is increased by log scale
             for (i in 1..<waveformSize - 1) {
+                if (waveform[i] > 200 && waveform[i] < 9999999) {println(waveform[i])}
                 drawLine(
                     //start = Offset(x = (canvasWidth/(waveformSize - 1)) * i, y = (canvasHeight - (waveform[i] * 10)).toFloat()),
                     start = Offset(
@@ -280,6 +281,7 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                         )).toFloat() + leftOffset,
                         y = (size.height - (waveform[i + 1] * 1.5)).toFloat()
                     ),
+
                     strokeWidth = 4.0f,
                     color = Color.Blue
                 )
@@ -288,7 +290,6 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
         } else {
             //FIX THE RECOMPOSITION HERE! currently too slow!!
             drawImage(image=currentSpectrogramBitmap.value.asImageBitmap())
-
             drawImage(image=lastSpectrogramBitmap.value.asImageBitmap(), topLeft = Offset(x = (size.width / 2), y = 0.0f))
 
         }

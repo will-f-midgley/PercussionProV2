@@ -65,7 +65,7 @@ class AnalyseActivity : ComponentActivity() {
 fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()->Unit){
 
     val arraySize = frequencySpectrum.size  - 1
-
+    var storedFreq = ArrayList<MutableSet<String>>()
     val spectrogram by remember{
         mutableStateOf(
             //200 columns visible on the screen at one time. 100 is a placeholder value
@@ -75,10 +75,16 @@ fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()
 
     //when the spectrum is updated, remove the leftmost column from the spectrogram and add the newest one
     LaunchedEffect(frequencySpectrum){
-        val processedWave = getLogFrequencies(frequencySpectrum ,arraySize)
+        val (processedWave, testSet) = getLogFrequencies(frequencySpectrum ,arraySize)
 
-        //val fileContent = File("res/raw/wave.txt").readText()
-        //println(fileContent)
+        if (testSet.size > 0) { //println(testSet.size)
+            storedFreq += testSet
+            println(storedFreq.size)
+
+        } else if (testSet.size == 0 && storedFreq.size > 0) {
+            println("end note")
+            //storedFreq.clear()
+        }
         spectrogram.removeAt(0)
         spectrogram.add(processedWave.toList())
     }
