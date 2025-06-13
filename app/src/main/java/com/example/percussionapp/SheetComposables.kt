@@ -130,7 +130,7 @@ fun SpectrogramUpdate(waveform: DoubleArray,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
-
+    //println("inPracticeview")
     val notesPlayed by mutableStateOf(engineVM.notesPlayed.observeAsState().value)
     val waveform by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
     val currentBar by mutableStateOf(engineVM.currentBar.observeAsState().value)

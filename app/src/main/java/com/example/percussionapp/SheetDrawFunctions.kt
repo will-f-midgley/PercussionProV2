@@ -261,7 +261,6 @@ fun WaveFormPeaks(waveform: DoubleArray) {
 fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                currentSpectrogramBitmap: MutableState<Bitmap>, lastSpectrogramBitmap: MutableState<Bitmap>,
                notesPlayed: Int, currentNote: Int){
-
     var canvasWidth by remember { mutableFloatStateOf(10f) }
     var canvasHeight by remember { mutableFloatStateOf(10f) }
     SpectrogramUpdate(waveform,spectrogramOn,notesPlayed,currentNote,lastSpectrogramBitmap,currentSpectrogramBitmap, canvasWidth, canvasHeight)
@@ -285,6 +284,8 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
             var prev2 : Double = 0.0
             var biggestPeak : Double = 0.0
             var biggestBin = -1
+            var biggestPeak2 : Double = 0.0
+            var biggestBin2 = -1
             for (i in 1..(waveform.size - 1)) {
                 //println(i)
                 if (prev2 > prev1 && prev2 > waveform[i] && prev2 > 90 && prev2 < 9999) {
@@ -292,13 +293,24 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                     if (prev2 > biggestPeak) {
                         biggestPeak = prev2
                         biggestBin = i-1
+                    } else if (prev2 > biggestPeak2) {
+                        biggestPeak2 = prev2
+                        biggestBin2 = i-1
                     }
                 }
                 prev1 = prev2
                 prev2 = waveform[i]
             }
             if (peaks.size > 0) {
-                println("$peaks - Biggest bin = $biggestBin at $biggestPeak")
+                if (biggestBin < 7) {
+                    println("Bass")
+                } else if (waveform[12] > 250 || waveform[11] > 250) {
+                    println("Tone")
+                } else if (waveform[18] > 350 || waveform[17] > 350) {
+                    println("Slap")
+                }
+                println("$peaks - Biggest bin = $biggestBin at $biggestPeak, second biggest = $biggestBin2 at $biggestPeak2")
+
 
             }
 
