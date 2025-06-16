@@ -301,6 +301,7 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                 prev1 = prev2
                 prev2 = waveform[i]
             }
+            // Function to analyse and print out predicted stroke
             if (peaks.size > 0) {
                 if (biggestBin < 7) {
                     println("Bass")
