@@ -82,7 +82,10 @@ class PracticeActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun Practice(recorderView: AudioEngineViewModel){
+
     PercussionAppTheme {
+        var x = 0
+        println("practice")
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val navController = rememberNavController()
 
@@ -152,7 +155,10 @@ fun Practice(recorderView: AudioEngineViewModel){
                 (context as? Activity)?.requestedOrientation =
                     ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 Box(Modifier.fillMaxSize().background(VeryLightOrange))
+                x = x+1
+                println("practice bouta run")
                 PracticeView(recorderView, args.genre)
+                println(x)
                 Column {
                     Spacer(Modifier.fillMaxHeight(0.8f))
                 }

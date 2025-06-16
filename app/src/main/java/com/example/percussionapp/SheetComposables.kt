@@ -100,20 +100,19 @@ fun SpectrogramUpdate(waveform: DoubleArray,
 
     //captures how many waves to record when showing spectrogram image -
     val wavesToRecord = remember { mutableIntStateOf(0) }
-
     //when waveform updated, update the current spectrogram to add frequency spectra (if showing)
-    LaunchedEffect(waveform) {
-
+    """LaunchedEffect(waveform) {
         if (spectrogramOn && wavesToRecord.intValue > 0) {
-            val processedWave = getLogFrequencies(waveform,spectrogramResolution)
+            val (processedWave, testSet) = getLogFrequencies(waveform,spectrogramResolution)
             currentSpectrogram.add(processedWave.toList())
             wavesToRecord.intValue--
+
             if (wavesToRecord.intValue == 0){
                 lastSpectrogramBitmap.value = currentSpectrogramBitmap.value.asShared()
                 currentSpectrogramBitmap.value = createScaledSpectrogramBitmap(currentSpectrogram,canvasWidth / 2.1f,canvasHeight)
             }
         }
-    }
+    }"""
 
     //when a note is played, change wavesToRecord to capture the frequencies for the next few milliseconds
     LaunchedEffect(notesPlayed) {
@@ -131,7 +130,7 @@ fun SpectrogramUpdate(waveform: DoubleArray,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
-
+    //println("inPracticeview")
     val notesPlayed by mutableStateOf(engineVM.notesPlayed.observeAsState().value)
     val waveform by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
     val currentBar by mutableStateOf(engineVM.currentBar.observeAsState().value)

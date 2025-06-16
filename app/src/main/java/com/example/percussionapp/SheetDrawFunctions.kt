@@ -243,15 +243,28 @@ fun PercussionStave(barProgress: Float, bar1Image: Int,notesPlayed:Int,currentNo
     }
 }
 
+@Composable
+fun WaveFormPeaks(waveform: DoubleArray) {
+    var prev1 : Double = 0.0
+    var prev2 : Double = 0.0
+    for (i in 1..<waveform.size - 1) {
+        if (prev2 > prev1 && prev2 > waveform[i] && prev2 > 350 && prev2 < 9999999 && i < 40) {
+            println(prev2)
+        }
+        prev1 = prev2
+        prev2 = waveform[i]
+    }
+}
+
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                currentSpectrogramBitmap: MutableState<Bitmap>, lastSpectrogramBitmap: MutableState<Bitmap>,
                notesPlayed: Int, currentNote: Int){
-
     var canvasWidth by remember { mutableFloatStateOf(10f) }
     var canvasHeight by remember { mutableFloatStateOf(10f) }
     SpectrogramUpdate(waveform,spectrogramOn,notesPlayed,currentNote,lastSpectrogramBitmap,currentSpectrogramBitmap, canvasWidth, canvasHeight)
+
     Canvas(
         modifier = Modifier.fillMaxSize().padding(20.dp).padding(top = 50.dp)
             /*.background(Color.hsv(300f, 0.1f, 0.85f))*/.graphicsLayer()
@@ -266,7 +279,47 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
 
             val windowSize = size.width / (log((waveformSize - 1).toDouble(), 10.0) * 2)
             //draw small frequency display in bottom left, each value is increased by log scale
+            val peaks = mutableSetOf<Int>()
+            var prev1 : Double = 0.0
+            var prev2 : Double = 0.0
+            var biggestPeak : Double = 0.0
+            var biggestBin = -1
+            var biggestPeak2 : Double = 0.0
+            var biggestBin2 = -1
+            for (i in 1..(waveform.size - 1)) {
+                //println(i)
+                if (prev2 > prev1 && prev2 > waveform[i] && prev2 > 90 && prev2 < 9999) {
+                    peaks.add(i-1)
+                    if (prev2 > biggestPeak) {
+                        biggestPeak = prev2
+                        biggestBin = i-1
+                    } else if (prev2 > biggestPeak2) {
+                        biggestPeak2 = prev2
+                        biggestBin2 = i-1
+                    }
+                }
+                prev1 = prev2
+                prev2 = waveform[i]
+            }
+            // Function to analyse and print out predicted stroke
+            if (peaks.size > 0) {
+                if (biggestBin < 7) {
+                    println("Bass")
+                } else if (waveform[12] > 250 || waveform[11] > 250) {
+                    println("Tone")
+                } else if (waveform[18] > 350 || waveform[17] > 350) {
+                    println("Slap")
+                }
+                println("$peaks - Biggest bin = $biggestBin at $biggestPeak, second biggest = $biggestBin2 at $biggestPeak2")
+
+
+            }
+
             for (i in 1..<waveformSize - 1) {
+                var tempColor = Color.Red
+                if (peaks.contains(i)) {
+                    tempColor = Color.Green
+                }
                 drawLine(
                     //start = Offset(x = (canvasWidth/(waveformSize - 1)) * i, y = (canvasHeight - (waveform[i] * 10)).toFloat()),
                     start = Offset(
@@ -280,15 +333,15 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                         )).toFloat() + leftOffset,
                         y = (size.height - (waveform[i + 1] * 1.5)).toFloat()
                     ),
+
                     strokeWidth = 4.0f,
-                    color = Color.Blue
+                    color = tempColor
                 )
             }
 
         } else {
             //FIX THE RECOMPOSITION HERE! currently too slow!!
             drawImage(image=currentSpectrogramBitmap.value.asImageBitmap())
-
             drawImage(image=lastSpectrogramBitmap.value.asImageBitmap(), topLeft = Offset(x = (size.width / 2), y = 0.0f))
 
         }
