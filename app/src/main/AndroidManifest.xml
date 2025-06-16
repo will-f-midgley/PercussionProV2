@@ -17,6 +17,11 @@
         android:theme="@style/Theme.PercussionApp"
         tools:targetApi="31">
         <activity
+            android:name=".TuningActivity"
+            android:exported="false"
+            android:label="@string/title_activity_tuning"
+            android:theme="@style/Theme.PercussionApp" />
+        <activity
             android:name=".AnalyseActivity"
             android:exported="false"
             android:label="@string/title_activity_analyse"

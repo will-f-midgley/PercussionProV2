@@ -28,9 +28,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import com.example.percussionapp.ui.theme.PercussionAppTheme
 import com.example.percussionapp.ui.theme.VeryLightOrange
-import android.content.Context
-import java.io.File
-import java.io.FileOutputStream
 
 const val SHEET_MUSIC_HEIGHT = 0.6f
 
@@ -133,6 +130,18 @@ fun Menu() {
                 .padding(10.dp)
         ) {
             Text(text = "Analyse", fontSize = 25.sp)
+        }
+
+        Button(
+            onClick = {
+                val intent = Intent(activityContext, TuningActivity::class.java)
+                activityContext.startActivity(intent)
+            }, Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
+            Text(text = "Tuning", fontSize = 25.sp)
         }
     }
 }
