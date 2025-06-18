@@ -51,6 +51,7 @@ class AnalyseActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PercussionAppTheme {
+                println("inanalysis")
                 val frequencySpectrum by mutableStateOf(recorderView.frequencySpectrum.observeAsState().value)
                 val recording by mutableStateOf(recorderView.detectorLoaded.observeAsState().value)
 

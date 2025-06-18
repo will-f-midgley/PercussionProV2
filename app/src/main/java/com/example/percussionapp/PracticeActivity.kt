@@ -46,7 +46,6 @@ import kotlinx.serialization.Serializable
 //val pathPrefix = Environment.getExternalStorageDirectory().absolutePath + "/recording"
 
 class PracticeActivity : ComponentActivity() {
-
     val recorderViewModel = AudioEngineViewModel()
     val realRecorder = KotlinAudioEngine()
 

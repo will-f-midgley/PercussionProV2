@@ -28,8 +28,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,8 +54,10 @@ import kotlinx.serialization.Serializable
 class TuningActivity : ComponentActivity() {
     val recorderViewModel = AudioEngineViewModel()
     val realRecorder = KotlinAudioEngine()
+
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         realRecorder.initializeAssets(this.assets)
         super.onCreate(savedInstanceState)
 
@@ -64,10 +68,15 @@ class TuningActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            Box(Modifier
-                .fillMaxSize()
-                .background(VeryLightOrange))
-            Tuner()
+            PercussionAppTheme {
+                println("tuning")
+                val waveform by mutableStateOf(recorderViewModel.frequencySpectrum.observeAsState().value)
+                Box(Modifier
+                    .fillMaxSize()
+                    .background(VeryLightOrange))
+                Tuner(recorderViewModel)
+            }
+
         }
     }
 
@@ -82,26 +91,35 @@ class TuningActivity : ComponentActivity() {
     }
 }
 
+
+fun checkFreq(waveform : DoubleArray) {
+    println(waveform)
+}
+
+//fun checkFreq2(engineVM: AudioEngineViewModel) {
+ //   val waveform2 by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
+//}
+
+@Preview
 @Composable
-fun Tuner() {
+fun Tuner(engineVM: AudioEngineViewModel) {
+    println("hi")
     val activityContext = LocalContext.current
+    println("waveformdefined")
+    val waveform by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
+
+    //val waveform2 by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .padding(50.dp, 200.dp, 50.dp, 200.dp)
     ) {
-        Text(
-            text = "PercussionPro",
-            fontSize = 40.sp,
-            fontWeight = FontWeight.ExtraBold,
-            modifier = Modifier
-                .weight(2f)
-                .wrapContentSize()
-        )
+
         Button(
             onClick = {
-                println("pressed")
+                checkFreq(waveform!!)
+                //checkFreq2(engineVM)
             }, Modifier
                 .weight(1f)
                 .fillMaxWidth()
