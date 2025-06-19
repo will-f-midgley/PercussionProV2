@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import kotlin.math.log
+import java.util.Arrays
 
 //display showing early, late, miss etc.
 @Composable
@@ -256,6 +257,8 @@ fun WaveFormPeaks(waveform: DoubleArray) {
     }
 }
 
+
+
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
@@ -303,14 +306,30 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
             }
             // Function to analyse and print out predicted stroke
             if (peaks.size > 0) {
-                if (biggestBin < 7) {
-                    println("Bass")
-                } else if (waveform[12] > 250 || waveform[11] > 250) {
-                    println("Tone")
-                } else if (waveform[18] > 350 || waveform[17] > 350) {
-                    println("Slap")
+                var slapArray = arrayOf(86.42892712234213, 72.263845004136, 150.31081161915716, 139.4460845929765, 44.01599347251757, 21.41825511070141, 7.0265391374781485, 148.34470227831065, 358.4993505323191)
+                var toneArray = arrayOf(44.187432006412315, 25.670839837506115, 76.37721080917086, 124.24048435877741, 129.61980257519912, 82.1310829865887, 44.854661399239426, 47.13147251497897, 121.88675171923278)
+                var bassArray = arrayOf(669.9019151426718, 86.66255200799405, 35.66802710733727, 25.286240113354612, 33.21913862862645, 26.54039860150233, 19.62759959905264, 19.584165599083956, 31.610588147541467)
+                var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
+                var diffSlap = 0
+                var diffTone = 0
+                var diffBass = 0
+                for (i in 1..(slapArray.size-1)) {
+                    diffSlap = diffSlap + Math.abs((slapArray[i] - peaksArray[i]).toInt())
+                    diffTone = diffTone + Math.abs((toneArray[i] - peaksArray[i]).toInt())
+                    diffBass = diffBass + Math.abs((bassArray[i] - peaksArray[i]).toInt())
                 }
-                println("$peaks - Biggest bin = $biggestBin at $biggestPeak, second biggest = $biggestBin2 at $biggestPeak2")
+                println("diffBass = $diffBass")
+                println("diffSlap = $diffSlap")
+                println("diffTone = $diffTone")
+                println(Arrays.toString(peaksArray))
+                if (biggestBin < 7) {
+                    //println("Bass")
+                } else if (waveform[12] > 250 || waveform[11] > 250) {
+                    //println("Tone")
+                } else if (waveform[18] > 350 || waveform[17] > 350) {
+                    //println("Slap")
+                }
+                //println("$peaks - Biggest bin = $biggestBin at $biggestPeak, second biggest = $biggestBin2 at $biggestPeak2")
 
 
             }
