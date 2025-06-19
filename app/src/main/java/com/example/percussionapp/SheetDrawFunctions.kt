@@ -258,6 +258,18 @@ fun WaveFormPeaks(waveform: DoubleArray) {
 }
 
 
+fun Normalise(ar : Array<Double>) : Array<Double> {
+    var max : Double = 0.0
+    for (i in 0..(ar.size-1)) {
+        if (ar[i] > max) {
+            max = ar[i]
+        }
+    }
+    for (i in 0..(ar.size-1)) {
+        ar[i] = ar[i]/max
+    }
+    return ar
+}
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -310,25 +322,28 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                 var toneArray = arrayOf(44.187432006412315, 25.670839837506115, 76.37721080917086, 124.24048435877741, 129.61980257519912, 82.1310829865887, 44.854661399239426, 47.13147251497897, 121.88675171923278)
                 var bassArray = arrayOf(669.9019151426718, 86.66255200799405, 35.66802710733727, 25.286240113354612, 33.21913862862645, 26.54039860150233, 19.62759959905264, 19.584165599083956, 31.610588147541467)
                 var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
-                var diffSlap = 0
-                var diffTone = 0
-                var diffBass = 0
+                slapArray = Normalise(slapArray)
+                toneArray = Normalise(toneArray)
+                peaksArray = Normalise(peaksArray)
+                bassArray = Normalise(bassArray)
+
+                var diffSlap = 0.0
+                var diffTone = 0.0
+                var diffBass = 0.0
                 for (i in 1..(slapArray.size-1)) {
-                    diffSlap = diffSlap + Math.abs((slapArray[i] - peaksArray[i]).toInt())
-                    diffTone = diffTone + Math.abs((toneArray[i] - peaksArray[i]).toInt())
-                    diffBass = diffBass + Math.abs((bassArray[i] - peaksArray[i]).toInt())
+                    diffSlap = diffSlap + (slapArray[i] - peaksArray[i])*(slapArray[i] - peaksArray[i])
+                    diffTone = diffTone + (toneArray[i] - peaksArray[i])*(toneArray[i] - peaksArray[i])
+                    diffBass = diffBass + (bassArray[i] - peaksArray[i])*(bassArray[i] - peaksArray[i])
                 }
-                println("diffBass = $diffBass")
-                println("diffSlap = $diffSlap")
-                println("diffTone = $diffTone")
+
+
+
                 println(Arrays.toString(peaksArray))
-                if (biggestBin < 7) {
-                    //println("Bass")
-                } else if (waveform[12] > 250 || waveform[11] > 250) {
-                    //println("Tone")
-                } else if (waveform[18] > 350 || waveform[17] > 350) {
-                    //println("Slap")
-                }
+                if (diffBass < diffSlap && diffBass < diffTone) {
+                    println("diffBass = $diffBass")
+                } else if (diffTone < diffBass && diffTone < diffSlap) {
+                    println("diffTone = $diffTone")
+                } else {println("diffSlap = $diffSlap")}
                 //println("$peaks - Biggest bin = $biggestBin at $biggestPeak, second biggest = $biggestBin2 at $biggestPeak2")
 
 
