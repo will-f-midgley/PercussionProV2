@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -54,10 +55,10 @@ import kotlinx.serialization.Serializable
 class TuningActivity : ComponentActivity() {
     val recorderViewModel = AudioEngineViewModel()
     val realRecorder = KotlinAudioEngine()
-
+    val recording = true
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        println("beforetune")
         realRecorder.initializeAssets(this.assets)
         super.onCreate(savedInstanceState)
 
@@ -69,12 +70,12 @@ class TuningActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PercussionAppTheme {
-                println("tuning")
+                //println("tuning")
                 val waveform by mutableStateOf(recorderViewModel.frequencySpectrum.observeAsState().value)
                 Box(Modifier
                     .fillMaxSize()
                     .background(VeryLightOrange))
-                Tuner(recorderViewModel)
+                Tuner(recorderViewModel, waveform!!, recording!!, {recorderViewModel.toggleRecord()})
             }
 
         }
@@ -102,12 +103,14 @@ fun checkFreq(waveform : DoubleArray) {
 
 @Preview
 @Composable
-fun Tuner(engineVM: AudioEngineViewModel) {
-    println("hi")
+fun Tuner(engineVM: AudioEngineViewModel, waveform2 : DoubleArray, recording : Boolean, startRecord : ()->Unit ) {
+    if (waveform2[4] > 50) {println(waveform2[4])}
     val activityContext = LocalContext.current
-    println("waveformdefined")
+    //println("waveformdefined")
     val waveform by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
-
+    LaunchedEffect(waveform){
+        //println("launcedeffect")
+    }
     //val waveform2 by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -119,6 +122,7 @@ fun Tuner(engineVM: AudioEngineViewModel) {
         Button(
             onClick = {
                 checkFreq(waveform!!)
+                startRecord()
                 //checkFreq2(engineVM)
             }, Modifier
                 .weight(1f)

@@ -39,7 +39,6 @@ class AnalyseActivity : ComponentActivity() {
 
     @SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
     override fun onCreate(savedInstanceState: Bundle?) {
-
         realRecorder.initializeAssets(this.assets)
 
         super.onCreate(savedInstanceState)
