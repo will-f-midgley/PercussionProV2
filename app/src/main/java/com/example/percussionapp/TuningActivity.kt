@@ -49,16 +49,19 @@ import com.example.percussionapp.ui.theme.PercussionAppTheme
 import com.example.percussionapp.ui.theme.VeryLightOrange
 import kotlinx.serialization.Serializable
 
-
+public var prevAttack = 0.0
 
 
 class TuningActivity : ComponentActivity() {
     val recorderViewModel = AudioEngineViewModel()
     val realRecorder = KotlinAudioEngine()
     val recording = true
+
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         println("beforetune")
+
+        var peaksArray = arrayOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         realRecorder.initializeAssets(this.assets)
         super.onCreate(savedInstanceState)
 
@@ -69,14 +72,21 @@ class TuningActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            PercussionAppTheme {
-                //println("tuning")
-                val waveform by mutableStateOf(recorderViewModel.frequencySpectrum.observeAsState().value)
-                Box(Modifier
-                    .fillMaxSize()
-                    .background(VeryLightOrange))
-                Tuner(recorderViewModel, waveform!!, recording!!, {recorderViewModel.toggleRecord()})
-            }
+            //println("beforetheme")
+
+                //println("before")
+            val waveform by mutableStateOf(recorderViewModel.frequencySpectrum.observeAsState().value)
+            Box(Modifier
+                .fillMaxSize()
+                .background(VeryLightOrange))
+            Tuner(recorderViewModel, waveform!!, recording!!, {recorderViewModel.toggleRecord()})
+
+            //println(prevAttack)
+
+                //peaksArray = waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
+                //waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17]
+
+
 
         }
     }
@@ -104,9 +114,10 @@ fun checkFreq(waveform : DoubleArray) {
 @Preview
 @Composable
 fun Tuner(engineVM: AudioEngineViewModel, waveform2 : DoubleArray, recording : Boolean, startRecord : ()->Unit ) {
-    if (waveform2[4] > 50) {println(waveform2[4])}
+    if (waveform2[4] > 50 && waveform2[4] > prevAttack + 10 && waveform2[4] < 999) {println(waveform2[4])}
     val activityContext = LocalContext.current
-    //println("waveformdefined")
+    val currentAttack = waveform2[3]
+    //println("prev - $prevAttack , current - $currentAttack")
     val waveform by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
     LaunchedEffect(waveform){
         //println("launcedeffect")
@@ -116,7 +127,7 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform2 : DoubleArray, recording : B
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(50.dp, 200.dp, 50.dp, 200.dp)
+            .padding(50. dp, 200.dp, 50.dp, 200.dp)
     ) {
 
         Button(
@@ -132,4 +143,6 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform2 : DoubleArray, recording : B
             Text(text = "Yippee", fontSize = 25.sp)
         }
     }
+    if (waveform2[4] < 999) {prevAttack = waveform2[4]}
+
 }
