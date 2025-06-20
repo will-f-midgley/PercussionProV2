@@ -48,6 +48,7 @@ import com.example.percussionapp.ui.theme.LightOrange
 import com.example.percussionapp.ui.theme.PercussionAppTheme
 import com.example.percussionapp.ui.theme.VeryLightOrange
 import kotlinx.serialization.Serializable
+import java.util.Arrays
 
 public var prevAttack = 0.0
 
@@ -102,6 +103,27 @@ class TuningActivity : ComponentActivity() {
     }
 }
 
+fun Normalise2(ar : Array<Double>) : Array<Double> {
+    var max : Double = 0.0
+    for (i in 0..(ar.size-1)) {
+        if (ar[i] > max) {
+            max = ar[i]
+        }
+    }
+    for (i in 0..(ar.size-1)) {
+        ar[i] = ar[i]/max
+    }
+    return ar
+}
+
+fun Magnitude(ar : DoubleArray) : Double {
+    var mag : Double = 0.0
+    for (i in 0..(ar.size-1)) {
+        mag = mag + ar[i]
+    }
+    return mag
+}
+
 
 fun checkFreq(waveform : DoubleArray) {
     println(waveform)
@@ -113,15 +135,39 @@ fun checkFreq(waveform : DoubleArray) {
 
 @Preview
 @Composable
-fun Tuner(engineVM: AudioEngineViewModel, waveform2 : DoubleArray, recording : Boolean, startRecord : ()->Unit ) {
-    if (waveform2[4] > 50 && waveform2[4] > prevAttack + 10 && waveform2[4] < 999) {println(waveform2[4])}
+fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Boolean, startRecord : ()->Unit ) {
+    //if (waveform[4] > 50 && waveform[4] > prevAttack + 10 && waveform[4] < 999) {println(waveform[4])}
     val activityContext = LocalContext.current
-    val currentAttack = waveform2[3]
-    //println("prev - $prevAttack , current - $currentAttack")
-    val waveform by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
-    LaunchedEffect(waveform){
-        //println("launcedeffect")
+    val currentAttack = Magnitude(waveform)
+    var slapArray = arrayOf(86.42892712234213, 72.263845004136, 150.31081161915716, 139.4460845929765, 44.01599347251757, 21.41825511070141, 7.0265391374781485, 148.34470227831065, 358.4993505323191)
+    var toneArray = arrayOf(44.187432006412315, 25.670839837506115, 76.37721080917086, 124.24048435877741, 129.61980257519912, 82.1310829865887, 44.854661399239426, 47.13147251497897, 121.88675171923278)
+    var bassArray = arrayOf(669.9019151426718, 86.66255200799405, 35.66802710733727, 25.286240113354612, 33.21913862862645, 26.54039860150233, 19.62759959905264, 19.584165599083956, 31.610588147541467)
+    var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
+    //println(Arrays.toString(peaksArray))
+    slapArray = Normalise2(slapArray)
+    toneArray = Normalise2(toneArray)
+    peaksArray = Normalise2(peaksArray)
+    bassArray = Normalise2(bassArray)
+
+    var diffSlap = 0.0
+    var diffTone = 0.0
+    var diffBass = 0.0
+    for (i in 1..(slapArray.size-1)) {
+        diffSlap = diffSlap + (slapArray[i] - peaksArray[i])*(slapArray[i] - peaksArray[i])
+        diffTone = diffTone + (toneArray[i] - peaksArray[i])*(toneArray[i] - peaksArray[i])
+        diffBass = diffBass + (bassArray[i] - peaksArray[i])*(bassArray[i] - peaksArray[i])
     }
+    if (currentAttack > 100 && currentAttack > prevAttack + 40 && currentAttack < 999999999999) {
+        //println(Arrays.toString(peaksArray))
+        if (diffBass < diffSlap && diffBass < diffTone && diffBass < 0.2) {
+            println("diffBass = $diffBass")
+        } else if (diffTone < diffBass && diffTone < diffSlap && diffTone < 0.2) {
+            println("diffTone = $diffTone")
+        } else if (diffSlap < diffBass && diffSlap < diffTone && diffSlap < 0.2) {
+            println("diffSlap = $diffSlap")}
+    }
+
+    //println("prev - $prevAttack , current - $currentAttack")
     //val waveform2 by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -143,6 +189,7 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform2 : DoubleArray, recording : B
             Text(text = "Yippee", fontSize = 25.sp)
         }
     }
-    if (waveform2[4] < 999) {prevAttack = waveform2[4]}
+    //println(currentAttack)
+    prevAttack = currentAttack
 
 }
