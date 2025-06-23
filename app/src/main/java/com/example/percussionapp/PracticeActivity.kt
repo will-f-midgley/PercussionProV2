@@ -1,6 +1,9 @@
 package com.example.percussionapp
 
 import android.app.Activity
+import android.content.Context
+import android.widget.EditText
+import android.content.SharedPreferences
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
@@ -84,7 +87,6 @@ fun Practice(recorderView: AudioEngineViewModel){
 
     PercussionAppTheme {
         var x = 0
-        println("practice")
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val navController = rememberNavController()
 
@@ -155,6 +157,10 @@ fun Practice(recorderView: AudioEngineViewModel){
                     ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 Box(Modifier.fillMaxSize().background(VeryLightOrange))
                 x = x+1
+                val sharedPreference = context.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
+
+                val highscore = sharedPreference.getString("bass", "0")
+                println(highscore)
                 println("practice bouta run")
                 PracticeView(recorderView, args.genre)
                 println(x)

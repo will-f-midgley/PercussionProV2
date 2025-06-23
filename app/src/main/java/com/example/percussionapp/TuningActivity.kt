@@ -1,5 +1,8 @@
 package com.example.percussionapp
 
+import android.content.Context
+import android.widget.EditText
+import android.content.SharedPreferences
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -49,6 +52,7 @@ import com.example.percussionapp.ui.theme.PercussionAppTheme
 import com.example.percussionapp.ui.theme.VeryLightOrange
 import kotlinx.serialization.Serializable
 import java.util.Arrays
+
 
 public var prevAttack = 0.0
 
@@ -148,7 +152,24 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
     toneArray = Normalise2(toneArray)
     peaksArray = Normalise2(peaksArray)
     bassArray = Normalise2(bassArray)
+    //val sharedPreference = getSharedPreferences("Preference_name", MODE_PRIVATE)
 
+
+    val sharedPreference = activityContext.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
+
+    val highscore = sharedPreference.getString("bass", "0")
+    val parts = highscore?.split(",")
+    if (parts != null) {
+        for (i in 0..(parts.size-1)) {
+            println(parts[i].toDouble())
+        }
+    }
+
+    with (sharedPreference.edit()) {
+        //putInt("bass", slapArray)
+        putString("bass", Arrays.toString(bassArray).replace("[","").replace("]",""))
+        apply()
+    }
     var diffSlap = 0.0
     var diffTone = 0.0
     var diffBass = 0.0
