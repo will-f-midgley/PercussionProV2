@@ -146,10 +146,8 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
     val currentAttack = Magnitude(waveform)
     var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
     //println(Arrays.toString(peaksArray))
-    slapArray = Normalise2(slapArray)
-    toneArray = Normalise2(toneArray)
+
     peaksArray = Normalise2(peaksArray)
-    bassArray = Normalise2(bassArray)
     //val sharedPreference = getSharedPreferences("Preference_name", MODE_PRIVATE)
 
 
@@ -177,11 +175,11 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
     var diffSlap = 0.0
     var diffTone = 0.0
     var diffBass = 0.0
-    for (i in 1..(slapArray.size-1)) {
+    """for (i in 1..(slapArray.size-1)) {
         diffSlap = diffSlap + (slapArray[i] - peaksArray[i])*(slapArray[i] - peaksArray[i])
         diffTone = diffTone + (toneArray[i] - peaksArray[i])*(toneArray[i] - peaksArray[i])
         diffBass = diffBass + (bassArray[i] - peaksArray[i])*(bassArray[i] - peaksArray[i])
-    }
+    }"""
     if (currentAttack > 100 && currentAttack > prevAttack + 40 && currentAttack < 999999999999) {
         //println(Arrays.toString(peaksArray))
         with (sharedPreference.edit()) {

@@ -1,5 +1,6 @@
 package com.example.percussionapp
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -278,6 +280,8 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                notesPlayed: Int, currentNote: Int){
     var canvasWidth by remember { mutableFloatStateOf(10f) }
     var canvasHeight by remember { mutableFloatStateOf(10f) }
+    val activityContext = LocalContext.current
+    val sharedPreference = activityContext.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
     SpectrogramUpdate(waveform,spectrogramOn,notesPlayed,currentNote,lastSpectrogramBitmap,currentSpectrogramBitmap, canvasWidth, canvasHeight)
 
     Canvas(
@@ -318,35 +322,36 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
             }
             // Function to analyse and print out predicted stroke
             if (peaks.size > 0) {
-                var slapArray = arrayOf(86.42892712234213, 72.263845004136, 150.31081161915716, 139.4460845929765, 44.01599347251757, 21.41825511070141, 7.0265391374781485, 148.34470227831065, 358.4993505323191)
-                var toneArray = arrayOf(44.187432006412315, 25.670839837506115, 76.37721080917086, 124.24048435877741, 129.61980257519912, 82.1310829865887, 44.854661399239426, 47.13147251497897, 121.88675171923278)
-                var bassArray = arrayOf(669.9019151426718, 86.66255200799405, 35.66802710733727, 25.286240113354612, 33.21913862862645, 26.54039860150233, 19.62759959905264, 19.584165599083956, 31.610588147541467)
+                val rawSlap = sharedPreference.getString("Slap", "0")
+                var slapArray = rawSlap?.split(",")
+                val rawBass = sharedPreference.getString("Bass", "0")
+                var bassArray = rawBass?.split(",")
+                val rawTone = sharedPreference.getString("Tone", "0")
+                var toneArray = rawTone?.split(",")
                 var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
-                slapArray = Normalise(slapArray)
-                toneArray = Normalise(toneArray)
                 peaksArray = Normalise(peaksArray)
-                bassArray = Normalise(bassArray)
 
                 var diffSlap = 0.0
                 var diffTone = 0.0
                 var diffBass = 0.0
-                for (i in 1..(slapArray.size-1)) {
-                    diffSlap = diffSlap + (slapArray[i] - peaksArray[i])*(slapArray[i] - peaksArray[i])
-                    diffTone = diffTone + (toneArray[i] - peaksArray[i])*(toneArray[i] - peaksArray[i])
-                    diffBass = diffBass + (bassArray[i] - peaksArray[i])*(bassArray[i] - peaksArray[i])
+                if (slapArray != null && toneArray != null && bassArray != null) {
+                    for (i in 0..(slapArray.size - 1)) {
+                        //println(slapArray[i].toDouble())
+                        diffSlap = diffSlap + (slapArray[i].toDouble() - peaksArray[i]) * (slapArray[i].toDouble() - peaksArray[i])
+                        diffBass = diffBass + (bassArray[i].toDouble() - peaksArray[i]) * (bassArray[i].toDouble() - peaksArray[i])
+                        diffTone = diffTone + (toneArray[i].toDouble() - peaksArray[i]) * (toneArray[i].toDouble() - peaksArray[i])
+                    }
                 }
 
 
-
                 println(Arrays.toString(peaksArray))
+                println("$diffBass, $diffSlap, $diffTone")
+                println("$slapArray, $bassArray, $toneArray")
                 if (diffBass < diffSlap && diffBass < diffTone) {
                     println("diffBass = $diffBass")
                 } else if (diffTone < diffBass && diffTone < diffSlap) {
                     println("diffTone = $diffTone")
                 } else {println("diffSlap = $diffSlap")}
-                //println("$peaks - Biggest bin = $biggestBin at $biggestPeak, second biggest = $biggestBin2 at $biggestPeak2")
-
-
             }
 
             for (i in 1..<waveformSize - 1) {
