@@ -55,6 +55,7 @@ import java.util.Arrays
 
 
 public var prevAttack = 0.0
+public var selectedTune = "Null"
 
 
 class TuningActivity : ComponentActivity() {
@@ -143,9 +144,6 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
     //if (waveform[4] > 50 && waveform[4] > prevAttack + 10 && waveform[4] < 999) {println(waveform[4])}
     val activityContext = LocalContext.current
     val currentAttack = Magnitude(waveform)
-    var slapArray = arrayOf(86.42892712234213, 72.263845004136, 150.31081161915716, 139.4460845929765, 44.01599347251757, 21.41825511070141, 7.0265391374781485, 148.34470227831065, 358.4993505323191)
-    var toneArray = arrayOf(44.187432006412315, 25.670839837506115, 76.37721080917086, 124.24048435877741, 129.61980257519912, 82.1310829865887, 44.854661399239426, 47.13147251497897, 121.88675171923278)
-    var bassArray = arrayOf(669.9019151426718, 86.66255200799405, 35.66802710733727, 25.286240113354612, 33.21913862862645, 26.54039860150233, 19.62759959905264, 19.584165599083956, 31.610588147541467)
     var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
     //println(Arrays.toString(peaksArray))
     slapArray = Normalise2(slapArray)
@@ -157,19 +155,25 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
 
     val sharedPreference = activityContext.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
 
-    val highscore = sharedPreference.getString("bass", "0")
-    val parts = highscore?.split(",")
+    //val highscore = sharedPreference.getString("bass", "0")
+    //val parts = highscore?.split(",")
     //if (parts != null) {
     //    for (i in 0..(parts.size-1)) {
     //        println(parts[i].toDouble())
     //    }
     //}
-
-    with (sharedPreference.edit()) {
-        //putInt("bass", slapArray)
-        putString("bass", Arrays.toString(bassArray).replace("[","").replace("]",""))
-        apply()
+    if (selectedTune == "Tune") {
+        val highscore = sharedPreference.getString("Bass", "0")
+        val parts = highscore?.split(",")
+        println("Bass - $parts")
+        val highscore2 = sharedPreference.getString("Slap", "0")
+        val parts2 = highscore2?.split(",")
+        println("Slap - $parts2")
+        val highscore3 = sharedPreference.getString("Tone", "0")
+        val parts3 = highscore3?.split(",")
+        println("Tone - $parts3")
     }
+
     var diffSlap = 0.0
     var diffTone = 0.0
     var diffBass = 0.0
@@ -180,12 +184,12 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
     }
     if (currentAttack > 100 && currentAttack > prevAttack + 40 && currentAttack < 999999999999) {
         //println(Arrays.toString(peaksArray))
-        if (diffBass < diffSlap && diffBass < diffTone && diffBass < 0.2) {
-            println("diffBass = $diffBass")
-        } else if (diffTone < diffBass && diffTone < diffSlap && diffTone < 0.2) {
-            println("diffTone = $diffTone")
-        } else if (diffSlap < diffBass && diffSlap < diffTone && diffSlap < 0.2) {
-            println("diffSlap = $diffSlap")}
+        with (sharedPreference.edit()) {
+            //putInt("bass", slapArray)
+            putString(selectedTune, Arrays.toString(peaksArray).replace("[","").replace("]",""))
+            apply()
+        }
+        println("retuned $selectedTune")
     }
 
     //println("prev - $prevAttack , current - $currentAttack")
@@ -196,9 +200,20 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
             .fillMaxSize()
             .padding(50. dp, 200.dp, 50.dp, 200.dp)
     ) {
-
         Button(
             onClick = {
+                selectedTune = "Tune"
+                startRecord()
+            }, Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
+            Text(text = "Tunes", fontSize = 25.sp)
+        }
+        Button(
+            onClick = {
+                selectedTune = "Bass"
                 checkFreq(waveform!!)
                 startRecord()
                 //checkFreq2(engineVM)
@@ -211,6 +226,7 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
         }
         Button(
             onClick = {
+                selectedTune = "Slap"
                 checkFreq(waveform!!)
                 startRecord()
                 //checkFreq2(engineVM)
@@ -223,6 +239,7 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
         }
         Button(
             onClick = {
+                selectedTune = "Tone"
                 checkFreq(waveform!!)
                 startRecord()
                 //checkFreq2(engineVM)
