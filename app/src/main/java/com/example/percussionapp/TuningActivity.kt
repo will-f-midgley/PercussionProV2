@@ -159,11 +159,11 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
 
     val highscore = sharedPreference.getString("bass", "0")
     val parts = highscore?.split(",")
-    if (parts != null) {
-        for (i in 0..(parts.size-1)) {
-            println(parts[i].toDouble())
-        }
-    }
+    //if (parts != null) {
+    //    for (i in 0..(parts.size-1)) {
+    //        println(parts[i].toDouble())
+    //    }
+    //}
 
     with (sharedPreference.edit()) {
         //putInt("bass", slapArray)
@@ -207,7 +207,31 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
                 .fillMaxWidth()
                 .padding(10.dp)
         ) {
-            Text(text = "Yippee", fontSize = 25.sp)
+            Text(text = "Bass", fontSize = 25.sp)
+        }
+        Button(
+            onClick = {
+                checkFreq(waveform!!)
+                startRecord()
+                //checkFreq2(engineVM)
+            }, Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
+            Text(text = "Slap", fontSize = 25.sp)
+        }
+        Button(
+            onClick = {
+                checkFreq(waveform!!)
+                startRecord()
+                //checkFreq2(engineVM)
+            }, Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
+            Text(text = "Tone", fontSize = 25.sp)
         }
     }
     //println(currentAttack)
