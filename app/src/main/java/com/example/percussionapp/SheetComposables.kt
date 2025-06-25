@@ -239,6 +239,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
             //
             Column {
                 Spacer(Modifier.fillMaxHeight(SHEET_MUSIC_HEIGHT))
+                TypeHit(waveform!!)
                 //spectrogram display
                 FreqCanvas(waveform!!,spectrogramOn.value, currentSpectrogramBitmap,lastSpectrogramBitmap,notesPlayed!!,currentNote!!)
 

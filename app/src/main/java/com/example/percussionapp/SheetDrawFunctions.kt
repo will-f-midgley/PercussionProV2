@@ -11,11 +11,18 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -52,6 +59,78 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import kotlin.math.log
 import java.util.Arrays
+
+@Composable
+fun TypeHit(waveform: DoubleArray) {
+    val textMeasurer = rememberTextMeasurer()
+    var noteColour by remember { mutableStateOf(Color.Red) }
+    var textColour by remember { mutableStateOf(Color.Red) }
+    val textAlpha = remember { Animatable(1f) }
+
+
+    val activityContext = LocalContext.current
+    val sharedPreference = activityContext.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
+    var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
+    peaksArray = Normalise(peaksArray)
+    var noteHit by remember { mutableStateOf("None") }
+    if (waveform[0] > 10) {
+        val rawSlap = sharedPreference.getString("Slap", "0")
+        var slapArray = rawSlap?.split(",")
+        val rawBass = sharedPreference.getString("Bass", "0")
+        var bassArray = rawBass?.split(",")
+        val rawTone = sharedPreference.getString("Tone", "0")
+        var toneArray = rawTone?.split(",")
+        var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
+        peaksArray = Normalise(peaksArray)
+
+        var diffSlap = 0.0
+        var diffTone = 0.0
+        var diffBass = 0.0
+        if (slapArray != null && toneArray != null && bassArray != null) {
+            for (i in 0..(slapArray.size - 1)) {
+                //println(slapArray[i].toDouble())
+                diffSlap = diffSlap + (slapArray[i].toDouble() - peaksArray[i]) * (slapArray[i].toDouble() - peaksArray[i])
+                diffBass = diffBass + (bassArray[i].toDouble() - peaksArray[i]) * (bassArray[i].toDouble() - peaksArray[i])
+                diffTone = diffTone + (toneArray[i].toDouble() - peaksArray[i]) * (toneArray[i].toDouble() - peaksArray[i])
+            }
+        }
+        if (diffBass < diffSlap && diffBass < diffTone) {
+            println("diffBass = $diffBass")
+            noteHit = "Bass"
+        } else if (diffTone < diffBass && diffTone < diffSlap) {
+            println("diffTone = $diffTone")
+            noteHit = "Tone"
+        } else {
+            println("diffSlap = $diffSlap")
+            noteHit = "Slap"
+        }
+    }
+
+    val measuredText =
+        textMeasurer.measure(
+            noteHit,
+            style = TextStyle(
+                fontSize = 30.sp,
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Bold
+            ),
+        )
+
+    Canvas(
+        modifier = Modifier.fillMaxSize().padding(20.dp).padding(top = 50.dp)
+            /*.background(Color.hsv(300f, 0.1f, 0.85f))*/.graphicsLayer()
+    ) {
+        drawText(
+            measuredText,
+            topLeft = Offset(
+                5 * -0.02f + (5 * 0.92f * (5)),
+                5 * 0.8f
+            ),
+            color = textColour,
+            alpha = textAlpha.value
+        )
+    }
+}
 
 //display showing early, late, miss etc.
 @Composable
