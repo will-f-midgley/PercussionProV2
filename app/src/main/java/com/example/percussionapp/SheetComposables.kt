@@ -59,14 +59,14 @@ import com.example.percussionapp.ui.theme.VeryLightOrange
 fun getSheetRes(style: Genre, barNum: Int) : MutableIntState {
     if (barNum == 1) {
         return when (style) {
-            Genre.MERENGUE -> mutableIntStateOf(R.drawable.merengue)
+            Genre.MERENGUE -> mutableIntStateOf(R.drawable.box)
             Genre.GUAGUANCO -> mutableIntStateOf(R.drawable.guaguanco)
             Genre.MOZAMBIQUE -> mutableIntStateOf(R.drawable.mozambique)
             else -> mutableIntStateOf(R.drawable.tumbao)
         }
     } else{
         return when (style) {
-            Genre.MERENGUE -> mutableIntStateOf(R.drawable.merengue2)
+            Genre.MERENGUE -> mutableIntStateOf(R.drawable.box)
             Genre.GUAGUANCO -> mutableIntStateOf(R.drawable.guaguanco2)
             Genre.MOZAMBIQUE -> mutableIntStateOf(R.drawable.mozambique2)
             Genre.BOLERO -> mutableIntStateOf(R.drawable.bolero2)

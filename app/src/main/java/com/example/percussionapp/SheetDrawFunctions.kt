@@ -223,7 +223,14 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
 @Composable
 fun Notes(barProgress: Float, currentNotes: Int, notesPlayed: Int,currentNote:Int){
     var notesWidth by remember{ mutableIntStateOf(0) }
+    notesWidth = notesWidth/2
+    val merenge = arrayOf("bass", "bass", "slap", "slap", "slap", "slap", "slap", "slap")
+    var style by mutableIntStateOf(R.drawable.bass)
+    //val style2 = style.intValue
+    //val test = mutableIntStateOf(R.drawable.bass)
+    //val test2 = test.intValue
     Box(contentAlignment = Alignment.CenterStart) {
+
         Image(
             painter = painterResource(R.drawable.note_line),
             contentDescription = "Start indicator",
@@ -249,26 +256,39 @@ fun Notes(barProgress: Float, currentNotes: Int, notesPlayed: Int,currentNote:In
             contentDescription = "End indicator",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ IntOffset((notesWidth * 0.86f).toInt(),0) },
+                .offset{ IntOffset((notesWidth * 0.86f).toInt()*8,0) },
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.Black)
         )
 
-        val notesImage = painterResource(currentNotes)
+        var notesImage = painterResource(style)
         val imageSize = notesImage.intrinsicSize
+        //notesImage is actual image. Change to index thing
+        notesWidth = (imageSize.width*16).toInt()
+        Row(
+            Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            for (i in 0..7) {
+                var note = merenge[i]
+                if (note == "bass") {
+                    style = R.drawable.bass
+                } else {style = R.drawable.slap}
+                notesImage = painterResource(style)
+                Image(
+                    painter = notesImage,
+                    contentDescription = "res$i",
+                    modifier = Modifier
+                        //.offset{ IntOffset((notesWidth * i).toInt(),0) }
+                        .aspectRatio(0.5f)
+                        .fillMaxSize()
 
-        Image(
-            painter = notesImage,
-            contentDescription = "res1",
-            modifier = Modifier
+                    //contentScale = ContentScale.Crop
+                )
+            }
+        }
 
-                .aspectRatio(imageSize.width/imageSize.height)
-                .fillMaxSize()
-                .onGloballyPositioned { coordinates ->
-                    notesWidth = coordinates.size.width
-                },
-            contentScale = ContentScale.Fit
-        )
+
 
         NoteFeedback(barProgress,notesPlayed, notesWidth,currentNote)
 
