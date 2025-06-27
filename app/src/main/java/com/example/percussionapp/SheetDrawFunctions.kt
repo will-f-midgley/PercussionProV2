@@ -221,10 +221,10 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
 }
 
 @Composable
-fun Notes(barProgress: Float, currentNotes: Int, notesPlayed: Int,currentNote:Int){
+fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,currentNote:Int){
     var notesWidth by remember{ mutableIntStateOf(0) }
     notesWidth = notesWidth/2
-    val merenge = arrayOf("bass", "bass", "slap", "slap", "slap", "slap", "slap", "slap")
+    val currentNotes = arrayOf("bass", "bass", "slap", "slap", "slap", "slap", "slap", "slap")
     var style by mutableIntStateOf(R.drawable.bass)
     //val style2 = style.intValue
     //val test = mutableIntStateOf(R.drawable.bass)
@@ -270,7 +270,7 @@ fun Notes(barProgress: Float, currentNotes: Int, notesPlayed: Int,currentNote:In
             horizontalArrangement = Arrangement.Center
         ) {
             for (i in 0..7) {
-                var note = merenge[i]
+                var note = currentNotes[i]
                 if (note == "bass") {
                     style = R.drawable.bass
                 } else {style = R.drawable.slap}
@@ -297,7 +297,7 @@ fun Notes(barProgress: Float, currentNotes: Int, notesPlayed: Int,currentNote:In
 
 // a lot of adaptive sizing is used to keep the view consistent between different screen sizes
 @Composable
-fun PercussionStave(barProgress: Float, bar1Image: Int,notesPlayed:Int,currentNote:Int){
+fun PercussionStave(barProgress: Float, bar1Image: Array<String>,notesPlayed:Int,currentNote:Int){
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 

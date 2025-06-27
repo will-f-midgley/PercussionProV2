@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -172,6 +173,9 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
     val spectrogramOn = remember { mutableStateOf(false) }
     val barProgress = remember { Animatable(0f) }
 
+    val barTop = arrayOf("bass", "bass", "slap", "slap", "slap", "slap", "slap", "slap")
+    val barBot = arrayOf("slap", "slap", "slap", "bass", "slap", "bass", "slap", "slap")
+
     BarUpdate(currentBar!!,barProgress,bar1Image,bar2Image, style, tempo.intValue)
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -222,18 +226,36 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
                 //var helpTextAlpha by remember{ mutableFloatStateOf(1f) } //remember{Animatable(1f)};
                 StartPracticeButton(engineVM,playing!!,style)
 
-                PercussionStave(barProgress.value, bar1Image.intValue,notesPlayed!!,currentNote!!)
+                PercussionStave(barProgress.value, barTop,notesPlayed!!,currentNote!!)
                 if(!spectrogramOn.value) {
                     Text("NEXT:", Modifier.offset(7.dp, 140.dp))
                     //Text("Place your phone 10cm from your instrument", Modifier.alpha(helpTextAlpha).offset(200.dp, 140.dp))
-                    Image(
-                        painter = painterResource(bar2Image.intValue),
-                        contentDescription = "res2",
+                    var style = R.drawable.bass
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .fillMaxHeight(0.4f)
-                            .offset(30.dp, (160).dp),
-                        contentScale = ContentScale.FillHeight
-                    )
+                        .fillMaxHeight(0.3f)
+                        .offset(30.dp, (160).dp)
+
+                    ) {
+                        for (i in 0..7) {
+                            var note = barBot[i]
+                            if (note == "bass") {
+                                style = R.drawable.bass
+                            } else {style = R.drawable.slap}
+                            var notesImage = painterResource(style)
+                            Image(
+                                painter = notesImage,
+                                contentDescription = "res$i",
+                                modifier = Modifier
+                                    //.offset{ IntOffset((notesWidth * i).toInt(),0) }
+                                    .aspectRatio(0.5f)
+                                    .fillMaxSize()
+
+                                //contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
                 }
             }
             //
