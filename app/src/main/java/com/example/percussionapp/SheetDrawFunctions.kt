@@ -81,7 +81,7 @@ fun TypeHit(waveform: DoubleArray) {
         println(testString)
     }
 
-    val testMerenge : Array<String> = activityContext.resources.getStringArray(R.array.merenge1)
+    val testMerenge : Array<String> = activityContext.resources.getStringArray(R.array.merengue1)
     for (i in 0..(testMerenge.size-1)) {
         println(testMerenge[i])
     }

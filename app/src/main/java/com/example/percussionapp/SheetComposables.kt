@@ -40,6 +40,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -57,21 +58,22 @@ import com.example.percussionapp.ui.theme.StrongBrown
 import com.example.percussionapp.ui.theme.VeryLightOrange
 
 //get image resources of sheet music
-fun getSheetRes(style: Genre, barNum: Int) : MutableIntState {
+fun getSheetRes(style: Genre, barNum: Int, context: android.content.Context) : Array<String> {
     if (barNum == 1) {
         return when (style) {
-            Genre.MERENGUE -> mutableIntStateOf(R.drawable.box)
-            Genre.GUAGUANCO -> mutableIntStateOf(R.drawable.guaguanco)
-            Genre.MOZAMBIQUE -> mutableIntStateOf(R.drawable.mozambique)
-            else -> mutableIntStateOf(R.drawable.tumbao)
+
+            Genre.MERENGUE -> context.resources.getStringArray(R.array.merengue1)
+            Genre.GUAGUANCO -> context.resources.getStringArray(R.array.guaguanco1)
+            Genre.MOZAMBIQUE -> context.resources.getStringArray(R.array.mozambique1)
+            else -> context.resources.getStringArray(R.array.tumbao1)
         }
     } else{
         return when (style) {
-            Genre.MERENGUE -> mutableIntStateOf(R.drawable.box)
-            Genre.GUAGUANCO -> mutableIntStateOf(R.drawable.guaguanco2)
-            Genre.MOZAMBIQUE -> mutableIntStateOf(R.drawable.mozambique2)
-            Genre.BOLERO -> mutableIntStateOf(R.drawable.bolero2)
-            else -> mutableIntStateOf(R.drawable.tumbao)
+            Genre.MERENGUE -> context.resources.getStringArray(R.array.merengue2)
+            Genre.GUAGUANCO -> context.resources.getStringArray(R.array.guaguanco2)
+            Genre.MOZAMBIQUE -> context.resources.getStringArray(R.array.mozambique2)
+            Genre.BOLERO -> context.resources.getStringArray(R.array.mozambique2)
+            else -> context.resources.getStringArray(R.array.tumbao2)
         }
     }
 }
@@ -131,6 +133,7 @@ fun SpectrogramUpdate(waveform: DoubleArray,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
+    val context = LocalContext.current
     //println("inPracticeview")
     val notesPlayed by mutableStateOf(engineVM.notesPlayed.observeAsState().value)
     val waveform by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
@@ -166,8 +169,8 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
         )
     }
 
-    val bar1Image = remember { getSheetRes(style,1) }
-    val bar2Image = remember{ getSheetRes(style,2) }
+    var bar1Image = remember { getSheetRes(style,1,context) }
+    var bar2Image = remember{ getSheetRes(style,2,context) }
     var settings by remember { mutableStateOf(false) }
     var info by remember { mutableStateOf(false) }
     val spectrogramOn = remember { mutableStateOf(false) }
@@ -230,7 +233,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
                 if(!spectrogramOn.value) {
                     Text("NEXT:", Modifier.offset(7.dp, 140.dp))
                     //Text("Place your phone 10cm from your instrument", Modifier.alpha(helpTextAlpha).offset(200.dp, 140.dp))
-                    var style = R.drawable.bass
+
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
@@ -240,9 +243,11 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
                     ) {
                         for (i in 0..7) {
                             var note = barBot[i]
-                            if (note == "bass") {
-                                style = R.drawable.bass
-                            } else {style = R.drawable.slap}
+                            val style = if (note == "bass") {
+                                R.drawable.bass
+                            } else {
+                                R.drawable.slap
+                            }
                             var notesImage = painterResource(style)
                             Image(
                                 painter = notesImage,
@@ -272,29 +277,28 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
 
 @Composable
 fun BarUpdate(currentBar: Int, barProgress:Animatable<Float, AnimationVector1D>,
-              bar1Image: MutableIntState,
-              bar2Image: MutableIntState,
+              bar1Image: Array<String>,
+              bar2Image: Array<String>,
               style: Genre,
               tempo: Int) {
+    val context = LocalContext.current
     var bars by remember { mutableStateOf(0) }
-    val res1 by remember {
-        getSheetRes(style,1)
-    }
-    val res2 by remember {
-        getSheetRes(style,2)
-    }
+    var res1 = getSheetRes(style,1,context)
+
+    var res2 = getSheetRes(style,2,context)
+
 
     //when starting, the barline will often move before the song has started - this removes it
     LaunchedEffect(currentBar) {
         bars++
         if (bars > 1) {
             if (currentBar == 1) {
-                bar1Image.intValue = res1
-                bar2Image.intValue = res2
+                bar1Image = res1
+                bar2Image = res2
 
             } else if (currentBar == 2) {
-                bar1Image.intValue = res2
-                bar2Image.intValue = res1
+                bar1Image = res2
+                bar2Image = res1
             }
             barProgress.animateTo(0f, snap())
             barProgress.animateTo(1f, tween((60 * 990 * 4 / tempo), easing = LinearEasing))
