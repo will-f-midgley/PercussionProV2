@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="merenge1">
+        <item>Bass</item>
+        <item>Slap</item>
+        <item>Bass</item>
+        <item>Slap</item>
+        <item>Bass</item>
+        <item>Slap</item>
+        <item>Bass</item>
+        <item>Slap</item>
+    </string-array>
+    <string-array name="merenge2">
+        <item>Slap</item>
+        <item>Slap</item>
+        <item>Slap</item>
+        <item>Slap</item>
+        <item>Slap</item>
+        <item>Slap</item>
+        <item>Bass</item>
+        <item>Slap</item>
+    </string-array>
+</resources>

@@ -73,7 +73,7 @@ fun TypeHit(waveform: DoubleArray) {
             externalDir.mkdirs()
         }
         val eternalFile = File(externalDir, "test_external.txt")
-        eternalFile.writeText("Hello world!")
+        //eternalFile.writeText("Hello world!")
         println("written!!!")
 
 
@@ -81,6 +81,10 @@ fun TypeHit(waveform: DoubleArray) {
         println(testString)
     }
 
+    val testMerenge : Array<String> = activityContext.resources.getStringArray(R.array.merenge1)
+    for (i in 0..(testMerenge.size-1)) {
+        println(testMerenge[i])
+    }
 
 
 
