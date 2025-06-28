@@ -3,6 +3,7 @@ package com.example.percussionapp
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
+import android.os.Environment
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.snap
@@ -59,16 +60,37 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import kotlin.math.log
 import java.util.Arrays
+import java.io.File
+import kotlin.io.path.exists
 
 @Composable
 fun TypeHit(waveform: DoubleArray) {
+    val activityContext = LocalContext.current
+
+    val externalDir = activityContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+    if (externalDir != null) {
+        if (!externalDir.exists()) {
+            externalDir.mkdirs()
+        }
+        val eternalFile = File(externalDir, "test_external.txt")
+        eternalFile.writeText("Hello world!")
+        println("written!!!")
+
+
+        val testString = eternalFile.readText()
+        println(testString)
+    }
+
+
+
+
     val textMeasurer = rememberTextMeasurer()
     var noteColour by remember { mutableStateOf(Color.Red) }
     var textColour by remember { mutableStateOf(Color.Red) }
     val textAlpha = remember { Animatable(1f) }
 
 
-    val activityContext = LocalContext.current
+
     val sharedPreference = activityContext.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
     var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
     peaksArray = Normalise(peaksArray)
