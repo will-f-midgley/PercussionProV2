@@ -143,5 +143,17 @@ fun Menu() {
         ) {
             Text(text = "Tuning", fontSize = 25.sp)
         }
+
+        Button(
+            onClick = {
+                val intent = Intent(activityContext, ComposeActivity::class.java)
+                activityContext.startActivity(intent)
+            }, Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
+            Text(text = "Compose", fontSize = 25.sp)
+        }
     }
 }

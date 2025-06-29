@@ -32,6 +32,11 @@
             android:label="@string/title_activity_listen"
             android:theme="@style/Theme.PercussionApp" />
         <activity
+            android:name=".ComposeActivity"
+            android:exported="false"
+            android:label="@string/title_activity_compose"
+            android:theme="@style/Theme.PercussionApp" />
+        <activity
             android:name=".PracticeActivity"
             android:exported="true"
             android:label="@string/title_activity_practice"

@@ -74,16 +74,14 @@ fun TypeHit(waveform: DoubleArray) {
         }
         val eternalFile = File(externalDir, "test_external.txt")
         //eternalFile.writeText("Hello world!")
-        println("written!!!")
 
 
         val testString = eternalFile.readText()
-        println(testString)
     }
 
     val testMerenge : Array<String> = activityContext.resources.getStringArray(R.array.merengue1)
     for (i in 0..(testMerenge.size-1)) {
-        println(testMerenge[i])
+        //println(testMerenge[i])
     }
 
 
@@ -250,7 +248,6 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
 fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,currentNote:Int){
     var notesWidth by remember{ mutableIntStateOf(0) }
     notesWidth = notesWidth/2
-    val currentNotes = arrayOf("bass", "bass", "slap", "slap", "slap", "slap", "slap", "slap")
     var style by mutableIntStateOf(R.drawable.bass)
     //val style2 = style.intValue
     //val test = mutableIntStateOf(R.drawable.bass)
@@ -297,7 +294,8 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
         ) {
             for (i in 0..7) {
                 var note = currentNotes[i]
-                if (note == "bass") {
+                //println(note)
+                if (note == "Bass") {
                     style = R.drawable.bass
                 } else {style = R.drawable.slap}
                 notesImage = painterResource(style)
@@ -324,6 +322,9 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
 // a lot of adaptive sizing is used to keep the view consistent between different screen sizes
 @Composable
 fun PercussionStave(barProgress: Float, bar1Image: Array<String>,notesPlayed:Int,currentNote:Int){
+    for (i in 0..7) {
+        println(bar1Image[i])
+    }
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 

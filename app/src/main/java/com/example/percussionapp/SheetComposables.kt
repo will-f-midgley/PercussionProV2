@@ -57,6 +57,9 @@ import com.example.percussionapp.ui.theme.PercussionAppTheme
 import com.example.percussionapp.ui.theme.StrongBrown
 import com.example.percussionapp.ui.theme.VeryLightOrange
 
+public var bar1Image = arrayOf("bass", "bass", "slap", "slap", "slap", "slap", "slap", "slap")
+public var bar2Image = arrayOf("bass", "bass", "slap", "slap", "slap", "slap", "slap", "slap")
+
 //get image resources of sheet music
 fun getSheetRes(style: Genre, barNum: Int, context: android.content.Context) : Array<String> {
     if (barNum == 1) {
@@ -169,17 +172,15 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
         )
     }
 
-    var bar1Image = remember { getSheetRes(style,1,context) }
-    var bar2Image = remember{ getSheetRes(style,2,context) }
+    bar1Image = remember { getSheetRes(style,1,context) }
+    bar2Image = remember{ getSheetRes(style,2,context) }
     var settings by remember { mutableStateOf(false) }
     var info by remember { mutableStateOf(false) }
     val spectrogramOn = remember { mutableStateOf(false) }
     val barProgress = remember { Animatable(0f) }
 
-    val barTop = arrayOf("bass", "bass", "slap", "slap", "slap", "slap", "slap", "slap")
-    val barBot = arrayOf("slap", "slap", "slap", "bass", "slap", "bass", "slap", "slap")
+    BarUpdate(currentBar!!,barProgress, style, tempo.intValue)
 
-    BarUpdate(currentBar!!,barProgress,bar1Image,bar2Image, style, tempo.intValue)
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -229,7 +230,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
                 //var helpTextAlpha by remember{ mutableFloatStateOf(1f) } //remember{Animatable(1f)};
                 StartPracticeButton(engineVM,playing!!,style)
 
-                PercussionStave(barProgress.value, barTop,notesPlayed!!,currentNote!!)
+                PercussionStave(barProgress.value, bar1Image,notesPlayed!!,currentNote!!)
                 if(!spectrogramOn.value) {
                     Text("NEXT:", Modifier.offset(7.dp, 140.dp))
                     //Text("Place your phone 10cm from your instrument", Modifier.alpha(helpTextAlpha).offset(200.dp, 140.dp))
@@ -242,8 +243,8 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
 
                     ) {
                         for (i in 0..7) {
-                            var note = barBot[i]
-                            val style = if (note == "bass") {
+                            var note = bar2Image[i]
+                            val style = if (note == "Bass") {
                                 R.drawable.bass
                             } else {
                                 R.drawable.slap
@@ -277,21 +278,21 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
 
 @Composable
 fun BarUpdate(currentBar: Int, barProgress:Animatable<Float, AnimationVector1D>,
-              bar1Image: Array<String>,
-              bar2Image: Array<String>,
               style: Genre,
               tempo: Int) {
     val context = LocalContext.current
     var bars by remember { mutableStateOf(0) }
     var res1 = getSheetRes(style,1,context)
-
     var res2 = getSheetRes(style,2,context)
 
 
     //when starting, the barline will often move before the song has started - this removes it
     LaunchedEffect(currentBar) {
+        println("bars ------ $currentBar")
         bars++
         if (bars > 1) {
+            barProgress.animateTo(0f, snap())
+            barProgress.animateTo(1f, tween((60 * 990 * 4 / tempo), easing = LinearEasing))
             if (currentBar == 1) {
                 bar1Image = res1
                 bar2Image = res2
@@ -300,8 +301,7 @@ fun BarUpdate(currentBar: Int, barProgress:Animatable<Float, AnimationVector1D>,
                 bar1Image = res2
                 bar2Image = res1
             }
-            barProgress.animateTo(0f, snap())
-            barProgress.animateTo(1f, tween((60 * 990 * 4 / tempo), easing = LinearEasing))
+
         }
     }
 

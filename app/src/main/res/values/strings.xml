@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">PercussionApp</string>
     <string name="title_activity_tuning">AnalyseActivity</string>
+    <string name="title_activity_compose">ComposeActivity</string>
     <string name="title_activity_practice">PracticeActivity</string>
     <string name="title_activity_listen">ListenActivity</string>
     <string name="title_activity_analyse">AnalyseActivity</string>
