@@ -236,7 +236,6 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
             ) {
                 //var helpTextAlpha by remember{ mutableFloatStateOf(1f) } //remember{Animatable(1f)};
                 StartPracticeButton(engineVM,playing!!,style)
-                println(currentBar)
                 PercussionStave(barProgress.value, bar1Image,notesPlayed!!,currentNote!!)
                 if(!spectrogramOn.value) {
                     Text("NEXT:", Modifier.offset(7.dp, 140.dp))

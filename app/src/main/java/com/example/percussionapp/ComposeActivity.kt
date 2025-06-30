@@ -28,7 +28,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -48,6 +52,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.Icon
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -58,11 +63,15 @@ import com.example.percussionapp.ui.theme.VeryLightOrange
 import kotlinx.serialization.Serializable
 import java.util.Arrays
 
+
 class ComposeActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.S)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         println("beforetune")
+        val tempIcon = Icons.Default.Info
+
         super.onCreate(savedInstanceState)
 
         //pass model to vm
@@ -70,6 +79,9 @@ class ComposeActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
+            val testIcon = painterResource(R.drawable.slap)
+            var bar1ImageArray = arrayOf("Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass")
+            var bar1ImageIcons = arrayOf(R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass)
             //println("beforetheme")
 
             //println("before")
@@ -89,16 +101,45 @@ class ComposeActivity : ComponentActivity() {
             }
 
             Row(
-                Modifier.fillMaxWidth().padding(10.dp),
+                //Modifier.fillMaxWidth().padding(100.dp),
+                Modifier.offset(7.dp, 140.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly) {
-                Image(
-                    painter = painterResource(R.drawable.slap),
-                    contentDescription = "length",
-                    modifier = Modifier.fillMaxHeight(),
-                    //onClick = {println("Hi")}
 
-                )
+                for (i in 0..7) {
+                    IconButton(
+                        onClick = {
+
+                            if (bar1Image[i] == "Bass") {
+                                bar1Image[i] = "Slap"
+                                bar1ImageIcons[i] = R.drawable.slap
+                            } else if (bar1Image[i] == "Slap") {
+                                bar1Image[i] = "Bass"
+                                bar1ImageIcons[i] = R.drawable.bass
+                            }
+                            val printed = bar1Image[i]
+                            println("pressed 1 - $i -- $printed")
+                                  },
+                    ) {
+                        Icon(painterResource(bar1ImageIcons[i]), "Info", tint = LightOrange)
+                    }
+                }
+                //val num1 = findViewById<EditText>(R.id.num1)
+            }
+
+            Row(
+                Modifier.offset(7.dp, 280.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly) {
+
+                for (i in 0..7) {
+                    IconButton(
+                        onClick = {println("pressed 2 - $i")},
+                    ) {
+                        Icon(testIcon, "Info", tint = LightOrange)
+                    }
+                }
+                //val num1 = findViewById<EditText>(R.id.num1)
             }
 
 
