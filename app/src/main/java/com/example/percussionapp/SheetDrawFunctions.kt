@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -67,7 +68,7 @@ import kotlin.io.path.exists
 fun TypeHit(waveform: DoubleArray) {
     val activityContext = LocalContext.current
 
-    val externalDir = activityContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+    """val externalDir = activityContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
     if (externalDir != null) {
         if (!externalDir.exists()) {
             externalDir.mkdirs()
@@ -77,7 +78,7 @@ fun TypeHit(waveform: DoubleArray) {
 
 
         val testString = eternalFile.readText()
-    }
+    }"""
 
     val testMerenge : Array<String> = activityContext.resources.getStringArray(R.array.merengue1)
     for (i in 0..(testMerenge.size-1)) {
@@ -288,6 +289,7 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
         val imageSize = notesImage.intrinsicSize
         //notesImage is actual image. Change to index thing
         notesWidth = (imageSize.width*16).toInt()
+
         Row(
             Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.Center
@@ -322,9 +324,6 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
 // a lot of adaptive sizing is used to keep the view consistent between different screen sizes
 @Composable
 fun PercussionStave(barProgress: Float, bar1Image: Array<String>,notesPlayed:Int,currentNote:Int){
-    for (i in 0..7) {
-        println(bar1Image[i])
-    }
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 
@@ -378,7 +377,7 @@ fun WaveFormPeaks(waveform: DoubleArray) {
     var prev2 : Double = 0.0
     for (i in 1..<waveform.size - 1) {
         if (prev2 > prev1 && prev2 > waveform[i] && prev2 > 350 && prev2 < 9999999 && i < 40) {
-            println(prev2)
+            //println(prev2)
         }
         prev1 = prev2
         prev2 = waveform[i]
@@ -470,7 +469,7 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                 }
 
 
-                println(Arrays.toString(peaksArray))
+                //println(Arrays.toString(peaksArray))
                 println("$diffBass, $diffSlap, $diffTone")
                 println("$slapArray, $bassArray, $toneArray")
                 if (diffBass < diffSlap && diffBass < diffTone) {

@@ -57,8 +57,8 @@ import com.example.percussionapp.ui.theme.PercussionAppTheme
 import com.example.percussionapp.ui.theme.StrongBrown
 import com.example.percussionapp.ui.theme.VeryLightOrange
 
-public var bar1Image = arrayOf("bass", "bass", "slap", "slap", "slap", "slap", "slap", "slap")
-public var bar2Image = arrayOf("bass", "bass", "slap", "slap", "slap", "slap", "slap", "slap")
+public var bar1Image = arrayOf("Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass")
+public var bar2Image = arrayOf("Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap")
 
 //get image resources of sheet music
 fun getSheetRes(style: Genre, barNum: Int, context: android.content.Context) : Array<String> {
@@ -181,6 +181,13 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
 
     BarUpdate(currentBar!!,barProgress, style, tempo.intValue)
 
+    if (currentBar == 1) {
+        bar1Image = remember { getSheetRes(style,1,context) }
+        bar2Image = remember{ getSheetRes(style,2,context) }
+    } else {
+        bar1Image = remember { getSheetRes(style,2,context) }
+        bar2Image = remember{ getSheetRes(style,1,context) }
+    }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -229,7 +236,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
             ) {
                 //var helpTextAlpha by remember{ mutableFloatStateOf(1f) } //remember{Animatable(1f)};
                 StartPracticeButton(engineVM,playing!!,style)
-
+                println(currentBar)
                 PercussionStave(barProgress.value, bar1Image,notesPlayed!!,currentNote!!)
                 if(!spectrogramOn.value) {
                     Text("NEXT:", Modifier.offset(7.dp, 140.dp))

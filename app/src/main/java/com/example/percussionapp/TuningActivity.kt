@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
@@ -190,6 +191,15 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
         println("retuned $selectedTune")
     }
 
+    val bass = sharedPreference.getString("Bass", "0")
+    val parts = bass?.split(",")
+    //println("Bass - $parts")
+    val slap = sharedPreference.getString("Slap", "0")
+    val parts2 = slap?.split(",")
+    //println("Slap - $parts2")
+    val tone = sharedPreference.getString("Tone", "0")
+    val parts3 = tone?.split(",")
+
     //println("prev - $prevAttack , current - $currentAttack")
     //val waveform2 by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
     Column(
@@ -248,6 +258,9 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
         ) {
             Text(text = "Tone", fontSize = 25.sp)
         }
+        Text("Bass: $bass", Modifier.offset(7.dp, 140.dp))
+        Text("Slap: $slap", Modifier.offset(7.dp, 140.dp))
+        Text("Tone: $tone", Modifier.offset(7.dp, 140.dp))
     }
     //println(currentAttack)
     prevAttack = currentAttack
