@@ -22,9 +22,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -44,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -80,8 +83,8 @@ class ComposeActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val testIcon = painterResource(R.drawable.slap)
-            var bar1ImageArray = arrayOf("Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass")
-            var bar1ImageIcons = arrayOf(R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass)
+            val bar1ImageArray = remember { mutableStateListOf("Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass")}
+            val bar1ImageIcons = remember { mutableStateListOf(R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass) }
             //println("beforetheme")
 
             //println("before")
@@ -119,6 +122,7 @@ class ComposeActivity : ComponentActivity() {
                             }
                             val printed = bar1Image[i]
                             println("pressed 1 - $i -- $printed")
+
                                   },
                     ) {
                         Icon(painterResource(bar1ImageIcons[i]), "Info", tint = LightOrange)
