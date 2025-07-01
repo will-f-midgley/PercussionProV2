@@ -11,6 +11,9 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import android.os.Environment
+
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +37,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import kotlin.io.path.exists
+import java.io.File
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,15 +73,19 @@ fun getSheetRes(style: Genre, barNum: Int, context: android.content.Context) : A
             Genre.MERENGUE -> context.resources.getStringArray(R.array.merengue1)
             Genre.GUAGUANCO -> context.resources.getStringArray(R.array.guaguanco1)
             Genre.MOZAMBIQUE -> context.resources.getStringArray(R.array.mozambique1)
-            else -> context.resources.getStringArray(R.array.tumbao1)
+            Genre.BOLERO -> context.resources.getStringArray(R.array.merengue1)
+            Genre.TUMBAO -> context.resources.getStringArray(R.array.tumbao1)
+            // res files cannot be modified so custom rhythms are stored and read from sharedPreferences instead.
+            Genre.CUSTOM -> context.resources.getStringArray(R.array.tumbao1)
         }
     } else{
         return when (style) {
             Genre.MERENGUE -> context.resources.getStringArray(R.array.merengue2)
             Genre.GUAGUANCO -> context.resources.getStringArray(R.array.guaguanco2)
             Genre.MOZAMBIQUE -> context.resources.getStringArray(R.array.mozambique2)
-            Genre.BOLERO -> context.resources.getStringArray(R.array.mozambique2)
-            else -> context.resources.getStringArray(R.array.tumbao2)
+            Genre.BOLERO -> context.resources.getStringArray(R.array.merengue1)
+            Genre.TUMBAO -> context.resources.getStringArray(R.array.tumbao2)
+            Genre.CUSTOM -> context.resources.getStringArray(R.array.tumbao2)
         }
     }
 }
@@ -107,7 +116,7 @@ fun SpectrogramUpdate(waveform: DoubleArray,
     //captures how many waves to record when showing spectrogram image -
     val wavesToRecord = remember { mutableIntStateOf(0) }
     //when waveform updated, update the current spectrogram to add frequency spectra (if showing)
-    """LaunchedEffect(waveform) {
+    LaunchedEffect(waveform) {
         if (spectrogramOn && wavesToRecord.intValue > 0) {
             val (processedWave, testSet) = getLogFrequencies(waveform,spectrogramResolution)
             currentSpectrogram.add(processedWave.toList())
@@ -118,7 +127,7 @@ fun SpectrogramUpdate(waveform: DoubleArray,
                 currentSpectrogramBitmap.value = createScaledSpectrogramBitmap(currentSpectrogram,canvasWidth / 2.1f,canvasHeight)
             }
         }
-    }"""
+    }
 
     //when a note is played, change wavesToRecord to capture the frequencies for the next few milliseconds
     LaunchedEffect(notesPlayed) {
@@ -173,6 +182,23 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
     }
 
     bar1Image = remember { getSheetRes(style,1,context) }
+
+    if (style == Genre.CUSTOM) {
+        val externalDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+        if (externalDir != null) {
+            if (!externalDir.exists()) {
+                externalDir.mkdirs()
+                println("making file")
+            }
+        } else {println("broken")}
+        val eternalFile = File(externalDir, "test_external.txt")
+        eternalFile.writeText("Hello world!")
+        val testString = eternalFile.readText()
+        println(testString)
+    }
+
+
+
     bar2Image = remember{ getSheetRes(style,2,context) }
     var settings by remember { mutableStateOf(false) }
     var info by remember { mutableStateOf(false) }

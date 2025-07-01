@@ -7,6 +7,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
+import kotlin.io.path.exists
 import android.os.Bundle
 import android.os.Environment
 import androidx.activity.ComponentActivity
@@ -64,7 +65,18 @@ import com.example.percussionapp.ui.theme.LightOrange
 import com.example.percussionapp.ui.theme.PercussionAppTheme
 import com.example.percussionapp.ui.theme.VeryLightOrange
 import kotlinx.serialization.Serializable
+import java.io.File
 import java.util.Arrays
+
+// Function to return appropriate drawable based on String input
+
+fun updateComposeIcon(note : String) : Int {
+    return when (note) {
+        "Bass" -> R.drawable.bass;
+        "Slap" -> R.drawable.slap;
+        else -> R.drawable.bass;
+    }
+}
 
 
 class ComposeActivity : ComponentActivity() {
@@ -74,7 +86,6 @@ class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         println("beforetune")
         val tempIcon = Icons.Default.Info
-
         super.onCreate(savedInstanceState)
 
         //pass model to vm
@@ -82,9 +93,24 @@ class ComposeActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
+            val context = LocalContext.current
+            val externalDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+            if (externalDir != null && !externalDir.exists()) {
+                externalDir.mkdirs()
+                println("making file")
+                var eternalFile = File(externalDir, "custom.txt")
+                eternalFile.writeText("Bass,Bass,Bass,Bass,Bass,Bass,Bass,Bass")
+            } else {}
+
+            val eternalFile = File(externalDir, "custom.txt")
+
+            val testString = eternalFile.readLines()
+
             val testIcon = painterResource(R.drawable.slap)
-            val bar1ImageArray = remember { mutableStateListOf("Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass")}
-            val bar1ImageIcons = remember { mutableStateListOf(R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass, R.drawable.bass) }
+            val bar1ImageArray = remember { mutableStateListOf(testString[0].split(","))}
+            val bar1ImageIcons = remember { mutableStateListOf(updateComposeIcon(bar1ImageArray[0][0]), updateComposeIcon(bar1ImageArray[0][1]), updateComposeIcon(bar1ImageArray[0][2]), updateComposeIcon(bar1ImageArray[0][3]), updateComposeIcon(bar1ImageArray[0][4]), updateComposeIcon(bar1ImageArray[0][5]), updateComposeIcon(bar1ImageArray[0][6]), updateComposeIcon(bar1ImageArray[0][7])) }
+            val bar2ImageArray = remember { mutableStateListOf(testString[1].split(","))}
+            val bar2ImageIcons = remember { mutableStateListOf(updateComposeIcon(bar2ImageArray[0][0]), updateComposeIcon(bar2ImageArray[0][1]), updateComposeIcon(bar2ImageArray[0][2]), updateComposeIcon(bar2ImageArray[0][3]), updateComposeIcon(bar2ImageArray[0][4]), updateComposeIcon(bar2ImageArray[0][5]), updateComposeIcon(bar2ImageArray[0][6]), updateComposeIcon(bar2ImageArray[0][7])) }
             //println("beforetheme")
 
             //println("before")
@@ -94,59 +120,92 @@ class ComposeActivity : ComponentActivity() {
                 .background(VeryLightOrange)
             )
 
-            Button(
-                onClick = {
-                }, Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
+            Column(
             ) {
-                Text(text = "Tone", fontSize = 25.sp)
-            }
-
-            Row(
-                //Modifier.fillMaxWidth().padding(100.dp),
-                Modifier.offset(7.dp, 140.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly) {
-
-                for (i in 0..7) {
-                    IconButton(
-                        onClick = {
-
-                            if (bar1Image[i] == "Bass") {
-                                bar1Image[i] = "Slap"
-                                bar1ImageIcons[i] = R.drawable.slap
-                            } else if (bar1Image[i] == "Slap") {
-                                bar1Image[i] = "Bass"
-                                bar1ImageIcons[i] = R.drawable.bass
-                            }
-                            val printed = bar1Image[i]
-                            println("pressed 1 - $i -- $printed")
-
-                                  },
-                    ) {
-                        Icon(painterResource(bar1ImageIcons[i]), "Info", tint = LightOrange)
-                    }
+                Button(
+                    onClick = {
+                        for (i in 0..7) {
+                            bar1Image[i] = "Bass"
+                            bar2Image[i] = "Bass"
+                            bar1ImageIcons[i] = R.drawable.bass
+                            bar2ImageIcons[i] = R.drawable.bass
+                        }
+                    }, Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Text(text = "Reset", fontSize = 25.sp)
                 }
-                //val num1 = findViewById<EditText>(R.id.num1)
-            }
 
-            Row(
-                Modifier.offset(7.dp, 280.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly) {
+                Row(
+                    Modifier.fillMaxWidth(),
 
-                for (i in 0..7) {
-                    IconButton(
-                        onClick = {println("pressed 2 - $i")},
-                    ) {
-                        Icon(testIcon, "Info", tint = LightOrange)
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+
+                    for (i in 0..7) {
+                        IconButton(
+                            onClick = {
+
+                                if (bar1Image[i] == "Bass") {
+                                    bar1Image[i] = "Slap"
+                                } else if (bar1Image[i] == "Slap") {
+                                    bar1Image[i] = "Bass"
+                                }
+                                bar1ImageIcons[i] = updateComposeIcon(bar1Image[i])
+                            },
+                        ) {
+                            Icon(painterResource(bar1ImageIcons[i]), "Info", tint = LightOrange)
+                        }
                     }
+                    //val num1 = findViewById<EditText>(R.id.num1)
                 }
-                //val num1 = findViewById<EditText>(R.id.num1)
+
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+
+                    for (i in 0..7) {
+                        IconButton(
+                            onClick = {
+
+                                if (bar2Image[i] == "Bass") {
+                                    bar2Image[i] = "Slap"
+                                } else if (bar2Image[i] == "Slap") {
+                                    bar2Image[i] = "Bass"
+                                }
+                                bar2ImageIcons[i] = updateComposeIcon(bar2Image[i])
+                            },
+                        ) {
+                            Icon(painterResource(bar2ImageIcons[i]), "Info", tint = LightOrange)
+                        }
+                    }
+                    //val num1 = findViewById<EditText>(R.id.num1)
+                }
+
+                Button(
+                    onClick = {
+                        var bar1ImageString = bar1Image[0].toString()
+                        var bar2ImageString = bar2Image[0].toString()
+                        for (i in 1..7) {
+                            bar1ImageString += ",${bar1Image[i]}"
+                            bar2ImageString += ",${bar2Image[i]}"
+                        }
+                        eternalFile.writeText("$bar1ImageString \n")
+                        eternalFile.appendText(bar2ImageString)
+                        val testString = eternalFile.readLines()
+                        println(testString)
+                        val test2 = testString[0].split(",")
+                    }, Modifier
+                        .fillMaxWidth()
+
+                ) {
+                    Text(text = "Save", fontSize = 25.sp)
+                }
             }
-
-
             //println(prevAttack)
 
             //peaksArray = waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )

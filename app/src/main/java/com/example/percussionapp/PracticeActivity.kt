@@ -135,6 +135,7 @@ fun Practice(recorderView: AudioEngineViewModel){
                             GenreButton({navController.navigate(SheetScreen(Genre.GUAGUANCO))},Genre.GUAGUANCO)
                             GenreButton({navController.navigate(SheetScreen(Genre.MERENGUE))},Genre.MERENGUE)
                             GenreButton({navController.navigate(SheetScreen(Genre.BOLERO))},Genre.BOLERO)
+                            GenreButton({navController.navigate(SheetScreen(Genre.CUSTOM))},Genre.CUSTOM)
                         }
                     }
                 }

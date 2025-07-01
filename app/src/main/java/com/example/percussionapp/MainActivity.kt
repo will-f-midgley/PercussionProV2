@@ -36,7 +36,8 @@ enum class Genre(var genre: String) {
     MOZAMBIQUE("Mozambique"),
     GUAGUANCO("Guaguancó"),
     MERENGUE("Merengue"),
-    BOLERO("Bolero");
+    BOLERO("Bolero"),
+    CUSTOM("Custom");
 
     fun genreToString(): String {
         return genre
