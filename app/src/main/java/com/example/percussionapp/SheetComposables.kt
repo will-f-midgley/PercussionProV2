@@ -48,6 +48,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -65,6 +66,20 @@ import com.example.percussionapp.ui.theme.VeryLightOrange
 public var bar1Image = arrayOf("Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass")
 public var bar2Image = arrayOf("Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap")
 
+fun getCustomArray(context: android.content.Context, barNum: Int) : Array<String> {
+    val externalDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+    if (externalDir != null && !externalDir.exists()) {
+        externalDir.mkdirs()
+        println("making file")
+        var eternalFile = File(externalDir, "custom.txt")
+        eternalFile.writeText("Bass,Bass,Bass,Bass,Bass,Bass,Bass,Bass")
+    }
+    val eternalFile = File(externalDir, "custom.txt")
+    val content = eternalFile.readLines()
+    println(content[barNum-1].split(","))
+    return content[barNum-1].split(",").toTypedArray()
+}
+
 //get image resources of sheet music
 fun getSheetRes(style: Genre, barNum: Int, context: android.content.Context) : Array<String> {
     if (barNum == 1) {
@@ -76,7 +91,7 @@ fun getSheetRes(style: Genre, barNum: Int, context: android.content.Context) : A
             Genre.BOLERO -> context.resources.getStringArray(R.array.merengue1)
             Genre.TUMBAO -> context.resources.getStringArray(R.array.tumbao1)
             // res files cannot be modified so custom rhythms are stored and read from sharedPreferences instead.
-            Genre.CUSTOM -> context.resources.getStringArray(R.array.tumbao1)
+            Genre.CUSTOM -> getCustomArray(context,barNum)
         }
     } else{
         return when (style) {
@@ -85,7 +100,7 @@ fun getSheetRes(style: Genre, barNum: Int, context: android.content.Context) : A
             Genre.MOZAMBIQUE -> context.resources.getStringArray(R.array.mozambique2)
             Genre.BOLERO -> context.resources.getStringArray(R.array.merengue1)
             Genre.TUMBAO -> context.resources.getStringArray(R.array.tumbao2)
-            Genre.CUSTOM -> context.resources.getStringArray(R.array.tumbao2)
+            Genre.CUSTOM -> getCustomArray(context,barNum)
         }
     }
 }
@@ -182,23 +197,6 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
     }
 
     bar1Image = remember { getSheetRes(style,1,context) }
-
-    if (style == Genre.CUSTOM) {
-        val externalDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
-        if (externalDir != null) {
-            if (!externalDir.exists()) {
-                externalDir.mkdirs()
-                println("making file")
-            }
-        } else {println("broken")}
-        val eternalFile = File(externalDir, "test_external.txt")
-        eternalFile.writeText("Hello world!")
-        val testString = eternalFile.readText()
-        println(testString)
-    }
-
-
-
     bar2Image = remember{ getSheetRes(style,2,context) }
     var settings by remember { mutableStateOf(false) }
     var info by remember { mutableStateOf(false) }

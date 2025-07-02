@@ -194,7 +194,7 @@ class ComposeActivity : ComponentActivity() {
                             bar1ImageString += ",${bar1Image[i]}"
                             bar2ImageString += ",${bar2Image[i]}"
                         }
-                        eternalFile.writeText("$bar1ImageString \n")
+                        eternalFile.writeText("$bar1ImageString\n")
                         eternalFile.appendText(bar2ImageString)
                         val testString = eternalFile.readLines()
                         println(testString)
