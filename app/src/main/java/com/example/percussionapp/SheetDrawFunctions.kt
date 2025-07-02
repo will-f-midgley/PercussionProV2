@@ -3,6 +3,7 @@ package com.example.percussionapp
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
+import java.util.Queue
 import android.os.Environment
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
@@ -64,21 +65,11 @@ import java.util.Arrays
 import java.io.File
 import kotlin.io.path.exists
 
+val queue = mutableListOf<Int>()
+
 @Composable
 fun TypeHit(waveform: DoubleArray) {
     val activityContext = LocalContext.current
-
-    """val externalDir = activityContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-    if (externalDir != null) {
-        if (!externalDir.exists()) {
-            externalDir.mkdirs()
-        }
-        val eternalFile = File(externalDir, "test_external.txt")
-        //eternalFile.writeText("Hello world!")
-
-
-        val testString = eternalFile.readText()
-    }"""
 
     val testMerenge : Array<String> = activityContext.resources.getStringArray(R.array.merengue1)
     for (i in 0..(testMerenge.size-1)) {
@@ -91,8 +82,6 @@ fun TypeHit(waveform: DoubleArray) {
     var noteColour by remember { mutableStateOf(Color.Red) }
     var textColour by remember { mutableStateOf(Color.Red) }
     val textAlpha = remember { Animatable(1f) }
-
-
 
     val sharedPreference = activityContext.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
     var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
@@ -157,6 +146,14 @@ fun TypeHit(waveform: DoubleArray) {
     }
 }
 
+fun calculatePercentage(last20: MutableList<Int>): Int {
+    var sum = 0
+    for (i in 0..(last20.size-1)) {
+        sum += last20[i].toInt()
+    }
+    return sum/last20.size
+}
+
 //display showing early, late, miss etc.
 @Composable
 fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNote:Int){
@@ -184,27 +181,37 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
         textAlpha.animateTo(0f, tween(1000))
     }
     LaunchedEffect(notesPlayed) {
+        if (queue.size > 19) {
+            queue.removeAt(0)
+        }
         if (currentNote == 0) {
             noteColour = Color.Green
             textColour = noteColour
             timeText = "GOOD"
+            queue.add(100)
         } else if (currentNote == 1) {
             noteColour = Color.hsv(35f, 1f, 1f)
             textColour = noteColour
             timeText = "EARLY"
+            queue.add(50)
         } else if (currentNote == 2) {
             noteColour = Color.Magenta
             textColour = noteColour
             timeText = "LATE"
+            queue.add(50)
         } else if (currentNote == -1) {
             noteColour = Color.Transparent
             textColour = Color.Red
             timeText = "MISS"
+            queue.add(0)
         } else if (currentNote == -2){
             noteColour = Color.Blue
             textColour = Color.Blue
             timeText = "SKIP"
+            queue.add(100)
         }
+        println(calculatePercentage(queue))
+
     }
     Canvas(
         Modifier
@@ -254,7 +261,6 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
     //val test = mutableIntStateOf(R.drawable.bass)
     //val test2 = test.intValue
     Box(contentAlignment = Alignment.CenterStart) {
-
         Image(
             painter = painterResource(R.drawable.note_line),
             contentDescription = "Start indicator",
