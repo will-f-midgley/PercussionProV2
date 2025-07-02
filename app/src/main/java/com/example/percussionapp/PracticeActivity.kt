@@ -135,6 +135,7 @@ fun Practice(recorderView: AudioEngineViewModel){
                             GenreButton({navController.navigate(SheetScreen(Genre.GUAGUANCO))},Genre.GUAGUANCO)
                             GenreButton({navController.navigate(SheetScreen(Genre.MERENGUE))},Genre.MERENGUE)
                             GenreButton({navController.navigate(SheetScreen(Genre.BOLERO))},Genre.BOLERO)
+                            GenreButton({navController.navigate(SheetScreen(Genre.CUSTOM))},Genre.CUSTOM)
                         }
                     }
                 }
@@ -157,11 +158,6 @@ fun Practice(recorderView: AudioEngineViewModel){
                     ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 Box(Modifier.fillMaxSize().background(VeryLightOrange))
                 x = x+1
-                val sharedPreference = context.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
-
-                val highscore = sharedPreference.getString("bass", "0")
-                println(highscore)
-                println("practice bouta run")
                 PracticeView(recorderView, args.genre)
                 println(x)
                 Column {

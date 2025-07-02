@@ -36,7 +36,8 @@ enum class Genre(var genre: String) {
     MOZAMBIQUE("Mozambique"),
     GUAGUANCO("Guaguancó"),
     MERENGUE("Merengue"),
-    BOLERO("Bolero");
+    BOLERO("Bolero"),
+    CUSTOM("Custom");
 
     fun genreToString(): String {
         return genre
@@ -142,6 +143,18 @@ fun Menu() {
                 .padding(10.dp)
         ) {
             Text(text = "Tuning", fontSize = 25.sp)
+        }
+
+        Button(
+            onClick = {
+                val intent = Intent(activityContext, ComposeActivity::class.java)
+                activityContext.startActivity(intent)
+            }, Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
+            Text(text = "Compose", fontSize = 25.sp)
         }
     }
 }

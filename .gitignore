@@ -14,3 +14,6 @@
 .cxx
 local.properties
 /.idea/vcs.xml
+/app/src/main/res/layout/activity_tuning.xml
+/.idea/appInsightsSettings.xml
+/.kotlin/sessions/kotlin-compiler-12769183442630630521.salive

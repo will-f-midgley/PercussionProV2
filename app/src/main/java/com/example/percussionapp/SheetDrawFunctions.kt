@@ -3,6 +3,7 @@ package com.example.percussionapp
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
+import android.os.Environment
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.snap
@@ -11,11 +12,18 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -24,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +61,101 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import kotlin.math.log
 import java.util.Arrays
+import java.io.File
+import kotlin.io.path.exists
+
+@Composable
+fun TypeHit(waveform: DoubleArray) {
+    val activityContext = LocalContext.current
+
+    """val externalDir = activityContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+    if (externalDir != null) {
+        if (!externalDir.exists()) {
+            externalDir.mkdirs()
+        }
+        val eternalFile = File(externalDir, "test_external.txt")
+        //eternalFile.writeText("Hello world!")
+
+
+        val testString = eternalFile.readText()
+    }"""
+
+    val testMerenge : Array<String> = activityContext.resources.getStringArray(R.array.merengue1)
+    for (i in 0..(testMerenge.size-1)) {
+        //println(testMerenge[i])
+    }
+
+
+
+    val textMeasurer = rememberTextMeasurer()
+    var noteColour by remember { mutableStateOf(Color.Red) }
+    var textColour by remember { mutableStateOf(Color.Red) }
+    val textAlpha = remember { Animatable(1f) }
+
+
+
+    val sharedPreference = activityContext.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
+    var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
+    peaksArray = Normalise(peaksArray)
+    var noteHit by remember { mutableStateOf("None") }
+    if (waveform[0] > 10) {
+        val rawSlap = sharedPreference.getString("Slap", "0")
+        var slapArray = rawSlap?.split(",")
+        val rawBass = sharedPreference.getString("Bass", "0")
+        var bassArray = rawBass?.split(",")
+        val rawTone = sharedPreference.getString("Tone", "0")
+        var toneArray = rawTone?.split(",")
+        var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
+        peaksArray = Normalise(peaksArray)
+
+        var diffSlap = 0.0
+        var diffTone = 0.0
+        var diffBass = 0.0
+        if (slapArray != null && toneArray != null && bassArray != null) {
+            for (i in 0..(slapArray.size - 1)) {
+                //println(slapArray[i].toDouble())
+                diffSlap = diffSlap + (slapArray[i].toDouble() - peaksArray[i]) * (slapArray[i].toDouble() - peaksArray[i])
+                diffBass = diffBass + (bassArray[i].toDouble() - peaksArray[i]) * (bassArray[i].toDouble() - peaksArray[i])
+                diffTone = diffTone + (toneArray[i].toDouble() - peaksArray[i]) * (toneArray[i].toDouble() - peaksArray[i])
+            }
+        }
+        if (diffBass < diffSlap && diffBass < diffTone) {
+            println("diffBass = $diffBass")
+            noteHit = "Bass"
+        } else if (diffTone < diffBass && diffTone < diffSlap) {
+            println("diffTone = $diffTone")
+            noteHit = "Tone"
+        } else {
+            println("diffSlap = $diffSlap")
+            noteHit = "Slap"
+        }
+    }
+
+    val measuredText =
+        textMeasurer.measure(
+            noteHit,
+            style = TextStyle(
+                fontSize = 30.sp,
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Bold
+            ),
+        )
+
+    Canvas(
+        modifier = Modifier.fillMaxSize().padding(20.dp).padding(top = 50.dp)
+            /*.background(Color.hsv(300f, 0.1f, 0.85f))*/.graphicsLayer()
+    ) {
+        drawText(
+            measuredText,
+            topLeft = Offset(
+                5 * -0.02f + (5 * 0.92f * (5)),
+                5 * 0.8f
+            ),
+            color = textColour,
+            alpha = textAlpha.value
+        )
+    }
+}
 
 //display showing early, late, miss etc.
 @Composable
@@ -142,9 +246,15 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
 }
 
 @Composable
-fun Notes(barProgress: Float, currentNotes: Int, notesPlayed: Int,currentNote:Int){
+fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,currentNote:Int){
     var notesWidth by remember{ mutableIntStateOf(0) }
+    notesWidth = notesWidth/2
+    var style by mutableIntStateOf(R.drawable.bass)
+    //val style2 = style.intValue
+    //val test = mutableIntStateOf(R.drawable.bass)
+    //val test2 = test.intValue
     Box(contentAlignment = Alignment.CenterStart) {
+
         Image(
             painter = painterResource(R.drawable.note_line),
             contentDescription = "Start indicator",
@@ -170,26 +280,41 @@ fun Notes(barProgress: Float, currentNotes: Int, notesPlayed: Int,currentNote:In
             contentDescription = "End indicator",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ IntOffset((notesWidth * 0.86f).toInt(),0) },
+                .offset{ IntOffset((notesWidth * 0.86f).toInt()*8,0) },
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.Black)
         )
 
-        val notesImage = painterResource(currentNotes)
+        var notesImage = painterResource(style)
         val imageSize = notesImage.intrinsicSize
+        //notesImage is actual image. Change to index thing
+        notesWidth = (imageSize.width*16).toInt()
 
-        Image(
-            painter = notesImage,
-            contentDescription = "res1",
-            modifier = Modifier
+        Row(
+            Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            for (i in 0..7) {
+                var note = currentNotes[i]
+                //println(note)
+                if (note == "Bass") {
+                    style = R.drawable.bass
+                } else {style = R.drawable.slap}
+                notesImage = painterResource(style)
+                Image(
+                    painter = notesImage,
+                    contentDescription = "res$i",
+                    modifier = Modifier
+                        //.offset{ IntOffset((notesWidth * i).toInt(),0) }
+                        .aspectRatio(0.5f)
+                        .fillMaxSize()
 
-                .aspectRatio(imageSize.width/imageSize.height)
-                .fillMaxSize()
-                .onGloballyPositioned { coordinates ->
-                    notesWidth = coordinates.size.width
-                },
-            contentScale = ContentScale.Fit
-        )
+                    //contentScale = ContentScale.Crop
+                )
+            }
+        }
+
+
 
         NoteFeedback(barProgress,notesPlayed, notesWidth,currentNote)
 
@@ -198,7 +323,7 @@ fun Notes(barProgress: Float, currentNotes: Int, notesPlayed: Int,currentNote:In
 
 // a lot of adaptive sizing is used to keep the view consistent between different screen sizes
 @Composable
-fun PercussionStave(barProgress: Float, bar1Image: Int,notesPlayed:Int,currentNote:Int){
+fun PercussionStave(barProgress: Float, bar1Image: Array<String>,notesPlayed:Int,currentNote:Int){
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 
@@ -252,7 +377,7 @@ fun WaveFormPeaks(waveform: DoubleArray) {
     var prev2 : Double = 0.0
     for (i in 1..<waveform.size - 1) {
         if (prev2 > prev1 && prev2 > waveform[i] && prev2 > 350 && prev2 < 9999999 && i < 40) {
-            println(prev2)
+            //println(prev2)
         }
         prev1 = prev2
         prev2 = waveform[i]
@@ -344,7 +469,7 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                 }
 
 
-                println(Arrays.toString(peaksArray))
+                //println(Arrays.toString(peaksArray))
                 println("$diffBass, $diffSlap, $diffTone")
                 println("$slapArray, $bassArray, $toneArray")
                 if (diffBass < diffSlap && diffBass < diffTone) {
