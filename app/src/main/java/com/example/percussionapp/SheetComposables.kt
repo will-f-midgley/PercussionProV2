@@ -76,7 +76,6 @@ fun getCustomArray(context: android.content.Context, barNum: Int) : Array<String
     }
     val eternalFile = File(externalDir, "custom.txt")
     val content = eternalFile.readLines()
-    println(content[barNum-1].split(","))
     return content[barNum-1].split(",").toTypedArray()
 }
 
