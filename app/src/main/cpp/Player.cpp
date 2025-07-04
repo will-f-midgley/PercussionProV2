@@ -69,18 +69,16 @@ namespace percussionapp {
     Player::onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames) {
 
         if (_isPlaying) {
-
             updateCurrentTime();
             updateCurrentBar();
             auto *outputBuffer = static_cast<int16_t *>(audioData);
-
+            //std::string temp = ("current pattern event: " + std::to_string(currentPatternEvent));
             long long currentTimeFromPatternStart = currentTimeMs - patternStartMs;
+
             //if time to next miss has passed, inform the UI and update the pattern event
             if (currentTimeFromPatternStart > nextMissMs) {
-
                 //LOG("%lld ",currentTimeFromPatternStart);
                 //LOG("SKIP at %d!", (int) nextMissMs);
-
                 //-2 = SKIP
                 audioHandler->onSound(-2);
                 updateCurrentPatternEvent();
@@ -119,12 +117,12 @@ namespace percussionapp {
     //2 = late
     int Player::checkNoteOnTime(int type, long long timePlayed) {
         updateCurrentBar();
-
         int patternLengthMs = (clavePatternLengthBeats *
                                (int) beatLengthMilliseconds);
 
         long long timePlayedFromPatternStart = (timePlayed - patternStartMs - latency) % patternLengthMs;
-
+        float temp = currentPattern[currentPatternEvent][1];
+        LOG("%f", temp);
         //sometimes the current note is in the next iteration of the pattern, so we need to take the mod
         int currentEventInBar = currentPatternEvent % currentPattern.size();
 

@@ -66,11 +66,12 @@ import java.io.File
 import kotlin.io.path.exists
 
 val queue = mutableListOf<Int>()
+var totalHit = 0
 
 @Composable
 fun TypeHit(waveform: DoubleArray) {
     val activityContext = LocalContext.current
-
+    println(bar1Image[totalHit%8])
     val testMerenge : Array<String> = activityContext.resources.getStringArray(R.array.merengue1)
     for (i in 0..(testMerenge.size-1)) {
         //println(testMerenge[i])
@@ -146,7 +147,9 @@ fun TypeHit(waveform: DoubleArray) {
     }
 }
 
+@Composable
 fun calculatePercentage(last20: MutableList<Int>): Int {
+    if (last20.size == 0) {return 100}
     var sum = 0
     for (i in 0..(last20.size-1)) {
         sum += last20[i].toInt()
@@ -208,11 +211,15 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
             noteColour = Color.Blue
             textColour = Color.Blue
             timeText = "SKIP"
-            queue.add(100)
+            queue.add(0)
         }
-        println(calculatePercentage(queue))
+        totalHit += 1
+        println(totalHit)
+        //println(calculatePercentage(queue))
 
     }
+    val percentText = calculatePercentage(queue).toString() + "%"
+
     Canvas(
         Modifier
             .width((notesWidth * 0.364).dp).then(Modifier.fillMaxHeight())
@@ -240,6 +247,16 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
                 ),
             )
 
+        val measuredPercent =
+            textMeasurer.measure(
+                percentText,
+                style = TextStyle(
+                    fontSize = 30.sp,
+                    fontFamily = FontFamily.SansSerif,
+                    fontWeight = FontWeight.Bold
+                ),
+            )
+
         drawText(
             measuredText,
             topLeft = Offset(
@@ -249,6 +266,15 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
             color = textColour,
             alpha = textAlpha.value
         )
+
+        drawText(
+            measuredPercent,
+            topLeft = Offset(1600f, 600f),
+            color = textColour
+        )
+
+
+
     }
 }
 

@@ -21,7 +21,7 @@ class AudioEngineViewModel : ViewModel() {
     private val _waveform by mutableStateOf(KotlinAudioEngine.liveWave)
     private val _currentBar by mutableStateOf(KotlinAudioEngine.liveBar)
     private val _currentNote by mutableStateOf(KotlinAudioEngine.currentNoteValue)
-
+    private val _currentBeat by mutableStateOf(KotlinAudioEngine.currentBeatValue)
     private val _isRunning = MutableLiveData(false)
     private var _detectorLoaded = MutableLiveData(false)
     private val _playerLoaded = MutableLiveData(false)

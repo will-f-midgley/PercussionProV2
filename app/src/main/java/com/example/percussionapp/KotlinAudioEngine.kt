@@ -35,6 +35,7 @@ class KotlinAudioEngine : PercussionEngineInterface, DefaultLifecycleObserver {
         var notesPlayed: Int = 0
         var liveNotes: MutableLiveData<Int> = MutableLiveData(0)
         var currentNoteValue: MutableLiveData<Int> = MutableLiveData(-2)
+        var currentBeatValue: MutableLiveData<Int> = MutableLiveData(0)
         var liveBar: MutableLiveData<Int> = MutableLiveData(0)
         var liveWave: MutableLiveData<DoubleArray> = MutableLiveData(DoubleArray(1025) {0.0})
         var spectrogram: MutableLiveData<List<List<Double>>> = MutableLiveData(MutableList(20) { List(1025) { 0.0 } })

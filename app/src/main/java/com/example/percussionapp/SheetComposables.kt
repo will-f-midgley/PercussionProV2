@@ -166,6 +166,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
     val waveform by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
     val currentBar by mutableStateOf(engineVM.currentBar.observeAsState().value)
     val currentNote by mutableStateOf(engineVM.currentNote.observeAsState().value)
+    //val currentBeat by mutableStateOf(engineVM.currentBeat.observeAsState().value)
     val playing by mutableStateOf(engineVM.playerLoaded.observeAsState().value)
     //these settings should realistically be in the C++ side and accesed via the VM
     //they are here temporarily, but when manipulation has to be done in native code they should be moved.
