@@ -276,9 +276,11 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
                             var note = bar2Image[i]
                             val style = if (note == "Bass") {
                                 R.drawable.bass
-                            } else {
+                            } else if (note == "Slap") {
                                 R.drawable.slap
-                            }
+                            } else if (note == "Tone") {
+                                R.drawable.tone
+                            } else (R.drawable.none)
                             var notesImage = painterResource(style)
                             Image(
                                 painter = notesImage,

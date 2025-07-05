@@ -112,12 +112,21 @@ fun TypeHit(waveform: DoubleArray) {
         if (diffBass < diffSlap && diffBass < diffTone) {
             println("diffBass = $diffBass")
             noteHit = "Bass"
+            if (bar1Image[totalHit%8] == "Bass") {
+                println("CORRECT HIT!!!!!!")
+            }
         } else if (diffTone < diffBass && diffTone < diffSlap) {
             println("diffTone = $diffTone")
             noteHit = "Tone"
+            if (bar1Image[totalHit%8] == "Tone") {
+                println("CORRECT HIT!!!!!!")
+            }
         } else {
             println("diffSlap = $diffSlap")
             noteHit = "Slap"
+            if (bar1Image[totalHit%8] == "Slap") {
+                println("CORRECT HIT!!!!!!")
+            }
         }
     }
 
@@ -329,9 +338,13 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
             for (i in 0..7) {
                 var note = currentNotes[i]
                 //println(note)
-                if (note == "Bass") {
-                    style = R.drawable.bass
-                } else {style = R.drawable.slap}
+                val style = if (note == "Bass") {
+                    R.drawable.bass
+                } else if (note == "Slap") {
+                    R.drawable.slap
+                } else if (note == "Tone") {
+                    R.drawable.tone
+                } else (R.drawable.none)
                 notesImage = painterResource(style)
                 Image(
                     painter = notesImage,

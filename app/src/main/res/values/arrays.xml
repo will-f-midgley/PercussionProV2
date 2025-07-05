@@ -2,9 +2,9 @@
 <resources>
     <string-array name="merengue1">
         <item>Bass</item>
-        <item>Slap</item>
+        <item>None</item>
         <item>Bass</item>
-        <item>Slap</item>
+        <item>Tone</item>
         <item>Bass</item>
         <item>Slap</item>
         <item>Bass</item>
