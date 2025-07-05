@@ -343,7 +343,9 @@ fun BarUpdate(currentBar: Int, barProgress:Animatable<Float, AnimationVector1D>,
 fun StartPracticeButton(engineVM: AudioEngineViewModel,playing:Boolean, style:Genre) {
     Row(Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.End){
         Button(
-            onClick = { engineVM.togglePlay(style)
+            onClick = {
+                totalHit = 0
+                engineVM.togglePlay(style)
                 engineVM.toggleRecord()
                 /*helpTextAlpha = 0f*/},
             modifier = Modifier.padding(end = 20.dp)

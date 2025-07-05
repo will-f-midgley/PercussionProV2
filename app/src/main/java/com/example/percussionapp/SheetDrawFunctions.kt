@@ -290,7 +290,7 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
 @Composable
 fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,currentNote:Int){
     var notesWidth by remember{ mutableIntStateOf(0) }
-    notesWidth = notesWidth/2
+    //notesWidth = notesWidth/2
     var style by mutableIntStateOf(R.drawable.bass)
     //val style2 = style.intValue
     //val test = mutableIntStateOf(R.drawable.bass)
@@ -376,33 +376,8 @@ fun PercussionStave(barProgress: Float, bar1Image: Array<String>,notesPlayed:Int
         .fillMaxWidth()
         .fillMaxHeight(SHEET_MUSIC_HEIGHT), contentAlignment = Alignment.CenterStart) {
 
-        Image(
-            painter = painterResource(R.drawable.stave_line),
-            contentDescription = "Stave",
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.4f),
-            contentScale = ContentScale.FillBounds,
-        )
         Row(Modifier.fillMaxSize()/*.background(Color.hsv(100f,0.9f,0.8f,0.5f))*/, verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(R.drawable.clef),
-                contentDescription = "Clef",
-                modifier = Modifier
-                    .fillMaxHeight(0.3f)
-                    .fillMaxWidth(0.07f)
-                    .padding(start = screenWidth * 0.02f),
-                contentScale = ContentScale.Fit,
-            )
-            Image(
-                painter = painterResource(R.drawable.cut_time),
-                contentDescription = "TimeSignature",
-                modifier = Modifier
-                    .fillMaxHeight(0.3f)
-                    .fillMaxWidth(0.07f)
-                    .padding(start = screenWidth * 0.02f),
-                contentScale = ContentScale.Fit,
-            )
+
             Box(contentAlignment = Alignment.CenterStart) {
                 Notes(barProgress, bar1Image,notesPlayed,currentNote)
             }

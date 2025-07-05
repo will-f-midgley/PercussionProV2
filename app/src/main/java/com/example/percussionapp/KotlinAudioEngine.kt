@@ -37,8 +37,8 @@ class KotlinAudioEngine : PercussionEngineInterface, DefaultLifecycleObserver {
         var currentNoteValue: MutableLiveData<Int> = MutableLiveData(-2)
         var currentBeatValue: MutableLiveData<Int> = MutableLiveData(0)
         var liveBar: MutableLiveData<Int> = MutableLiveData(0)
-        var liveWave: MutableLiveData<DoubleArray> = MutableLiveData(DoubleArray(1025) {0.0})
-        var spectrogram: MutableLiveData<List<List<Double>>> = MutableLiveData(MutableList(20) { List(1025) { 0.0 } })
+        var liveWave: MutableLiveData<DoubleArray> = MutableLiveData(DoubleArray(64) {0.0})
+        var spectrogram: MutableLiveData<List<List<Double>>> = MutableLiveData(MutableList(20) { List(64) { 0.0 } })
 
         //METHOD CAN BE CALLED BY C++ CODE AS IT IS IN COMPANION OBJECT
         @JvmStatic
