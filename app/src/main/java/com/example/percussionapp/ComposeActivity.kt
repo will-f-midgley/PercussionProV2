@@ -95,14 +95,15 @@ class ComposeActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
             val externalDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
-            if (externalDir != null && !externalDir.exists()) {
-                externalDir.mkdirs()
-                println("making file")
-                var eternalFile = File(externalDir, "custom.txt")
-                eternalFile.writeText("Bass,Bass,Bass,Bass,Bass,Bass,Bass,Bass")
-            } else {}
-
             val eternalFile = File(externalDir, "custom.txt")
+            if (externalDir != null && !eternalFile.exists()) {
+                println("making file")
+                externalDir.mkdirs()
+
+                eternalFile.writeText("None,None,None,None,None,None,None,None\nNone,None,None,None,None,None,None,None")
+            } else {}
+            println("after")
+            //val eternalFile = File(externalDir, "custom.txt")
 
             val testString = eternalFile.readLines()
 

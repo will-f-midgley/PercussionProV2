@@ -89,6 +89,7 @@ fun getSheetRes(style: Genre, barNum: Int, context: android.content.Context) : A
             Genre.MOZAMBIQUE -> context.resources.getStringArray(R.array.mozambique1)
             Genre.BOLERO -> context.resources.getStringArray(R.array.merengue1)
             Genre.TUMBAO -> context.resources.getStringArray(R.array.tumbao1)
+            Genre.KASSA -> context.resources.getStringArray(R.array.kassa1)
             // res files cannot be modified so custom rhythms are stored and read from sharedPreferences instead.
             Genre.CUSTOM -> getCustomArray(context,barNum)
         }
@@ -99,6 +100,7 @@ fun getSheetRes(style: Genre, barNum: Int, context: android.content.Context) : A
             Genre.MOZAMBIQUE -> context.resources.getStringArray(R.array.mozambique2)
             Genre.BOLERO -> context.resources.getStringArray(R.array.merengue1)
             Genre.TUMBAO -> context.resources.getStringArray(R.array.tumbao2)
+            Genre.KASSA -> context.resources.getStringArray(R.array.kassa2)
             Genre.CUSTOM -> getCustomArray(context,barNum)
         }
     }
@@ -298,7 +300,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
             }
             //
             Column {
-                Spacer(Modifier.fillMaxHeight(SHEET_MUSIC_HEIGHT))
+                Spacer(Modifier.fillMaxHeight(SHEET_MUSIC_HEIGHT/2))
                 TypeHit(waveform!!)
                 //spectrogram display
                 FreqCanvas(waveform!!,spectrogramOn.value, currentSpectrogramBitmap,lastSpectrogramBitmap,notesPlayed!!,currentNote!!)

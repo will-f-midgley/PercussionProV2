@@ -66,9 +66,6 @@ class TuningActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
-        println("beforetune")
-
-        var peaksArray = arrayOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         realRecorder.initializeAssets(this.assets)
         super.onCreate(savedInstanceState)
 
@@ -79,22 +76,11 @@ class TuningActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            //println("beforetheme")
-
-                //println("before")
             val waveform by mutableStateOf(recorderViewModel.frequencySpectrum.observeAsState().value)
             Box(Modifier
                 .fillMaxSize()
                 .background(VeryLightOrange))
             Tuner(recorderViewModel, waveform!!, recording!!, {recorderViewModel.toggleRecord()})
-
-            //println(prevAttack)
-
-                //peaksArray = waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
-                //waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17]
-
-
-
         }
     }
 
@@ -119,7 +105,7 @@ fun Magnitude(ar : DoubleArray) : Double {
 
 
 fun checkFreq(waveform : DoubleArray) {
-    println(waveform)
+    //println(waveform)
 }
 
 //fun checkFreq2(engineVM: AudioEngineViewModel) {
@@ -133,8 +119,9 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
     val activityContext = LocalContext.current
     val currentAttack = Magnitude(waveform)
     //println(Arrays.toString(peaksArray))
-
+    println(waveform[0])
     val peaksArray = Normalise(waveform)
+
     //val sharedPreference = getSharedPreferences("Preference_name", MODE_PRIVATE)
 
 
@@ -167,7 +154,7 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
         diffTone = diffTone + (toneArray[i] - peaksArray[i])*(toneArray[i] - peaksArray[i])
         diffBass = diffBass + (bassArray[i] - peaksArray[i])*(bassArray[i] - peaksArray[i])
     }"""
-    if (currentAttack > 100 && currentAttack > prevAttack + 40 && currentAttack < 999999999999) {
+    if (currentAttack > 200 && currentAttack > prevAttack + 40 && currentAttack < 999999999999) {
         //println(Arrays.toString(peaksArray))
         with (sharedPreference.edit()) {
             //putInt("bass", slapArray)
@@ -244,9 +231,9 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
         ) {
             Text(text = "Tone", fontSize = 25.sp)
         }
-        Text("Bass: $bass", Modifier.offset(7.dp, 140.dp))
-        Text("Slap: $slap", Modifier.offset(7.dp, 140.dp))
-        Text("Tone: $tone", Modifier.offset(7.dp, 140.dp))
+        //Text("Bass: $bass", Modifier.offset(7.dp, 140.dp))
+        //Text("Slap: $slap", Modifier.offset(7.dp, 140.dp))
+        //Text("Tone: $tone", Modifier.offset(7.dp, 140.dp))
     }
     //println(currentAttack)
     prevAttack = currentAttack

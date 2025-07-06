@@ -71,7 +71,7 @@ var totalHit = 0
 @Composable
 fun TypeHit(waveform: DoubleArray) {
     val activityContext = LocalContext.current
-    println(bar1Image[totalHit%8])
+    //println(bar1Image[totalHit%8])
     val testMerenge : Array<String> = activityContext.resources.getStringArray(R.array.merengue1)
     for (i in 0..(testMerenge.size-1)) {
         //println(testMerenge[i])
@@ -523,7 +523,7 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
         } else {
             //FIX THE RECOMPOSITION HERE! currently too slow!!
             drawImage(image=currentSpectrogramBitmap.value.asImageBitmap())
-            drawImage(image=lastSpectrogramBitmap.value.asImageBitmap(), topLeft = Offset(x = (size.width / 2), y = 0.0f))
+            drawImage(image=lastSpectrogramBitmap.value.asImageBitmap(), topLeft = Offset(x = (size.width / 2), y = -10.0f))
 
         }
     }
