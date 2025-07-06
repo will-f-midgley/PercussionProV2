@@ -85,8 +85,6 @@ fun TypeHit(waveform: DoubleArray) {
     val textAlpha = remember { Animatable(1f) }
 
     val sharedPreference = activityContext.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
-    var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
-    peaksArray = Normalise(peaksArray)
     var noteHit by remember { mutableStateOf("None") }
     if (waveform[0] > 10) {
         val rawSlap = sharedPreference.getString("Slap", "0")
@@ -95,8 +93,7 @@ fun TypeHit(waveform: DoubleArray) {
         var bassArray = rawBass?.split(",")
         val rawTone = sharedPreference.getString("Tone", "0")
         var toneArray = rawTone?.split(",")
-        var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
-        peaksArray = Normalise(peaksArray)
+        val peaksArray = Normalise(waveform)
 
         var diffSlap = 0.0
         var diffTone = 0.0
@@ -297,6 +294,7 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
     //val test2 = test.intValue
     Box(contentAlignment = Alignment.CenterStart) {
         Image(
+            
             painter = painterResource(R.drawable.note_line),
             contentDescription = "Start indicator",
             modifier = Modifier
@@ -405,7 +403,7 @@ fun WaveFormPeaks(waveform: DoubleArray) {
 }
 
 
-fun Normalise(ar : Array<Double>) : Array<Double> {
+fun Normalise(ar : DoubleArray) : DoubleArray {
     var max : Double = 0.0
     for (i in 0..(ar.size-1)) {
         if (ar[i] > max) {
@@ -473,8 +471,7 @@ fun FreqCanvas(waveform: DoubleArray, spectrogramOn: Boolean,
                 var bassArray = rawBass?.split(",")
                 val rawTone = sharedPreference.getString("Tone", "0")
                 var toneArray = rawTone?.split(",")
-                var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
-                peaksArray = Normalise(peaksArray)
+                val peaksArray = Normalise(waveform)
 
                 var diffSlap = 0.0
                 var diffTone = 0.0

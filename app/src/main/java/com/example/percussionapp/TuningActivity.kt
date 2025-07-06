@@ -109,19 +109,6 @@ class TuningActivity : ComponentActivity() {
     }
 }
 
-fun Normalise2(ar : Array<Double>) : Array<Double> {
-    var max : Double = 0.0
-    for (i in 0..(ar.size-1)) {
-        if (ar[i] > max) {
-            max = ar[i]
-        }
-    }
-    for (i in 0..(ar.size-1)) {
-        ar[i] = ar[i]/max
-    }
-    return ar
-}
-
 fun Magnitude(ar : DoubleArray) : Double {
     var mag : Double = 0.0
     for (i in 0..(ar.size-1)) {
@@ -145,10 +132,9 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
     //if (waveform[4] > 50 && waveform[4] > prevAttack + 10 && waveform[4] < 999) {println(waveform[4])}
     val activityContext = LocalContext.current
     val currentAttack = Magnitude(waveform)
-    var peaksArray = arrayOf(waveform[3], waveform[10], waveform[11], waveform[12], waveform[13], waveform[14], waveform[15], waveform[16], waveform[17] )
     //println(Arrays.toString(peaksArray))
 
-    peaksArray = Normalise2(peaksArray)
+    val peaksArray = Normalise(waveform)
     //val sharedPreference = getSharedPreferences("Preference_name", MODE_PRIVATE)
 
 
