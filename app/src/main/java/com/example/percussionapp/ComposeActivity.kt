@@ -4,8 +4,10 @@ import android.content.Context
 import android.widget.EditText
 import android.content.SharedPreferences
 import android.app.Activity
+import android.media.MediaPlayer
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.media.SoundPool
 import android.os.Build
 import kotlin.io.path.exists
 import android.os.Bundle
@@ -74,7 +76,8 @@ fun updateComposeIcon(note : String) : Int {
     return when (note) {
         "Bass" -> R.drawable.bass;
         "Slap" -> R.drawable.slap;
-        else -> R.drawable.bass;
+        "Tone" -> R.drawable.toneicon;
+        else -> R.drawable.none;
     }
 }
 
@@ -82,9 +85,12 @@ fun updateComposeIcon(note : String) : Int {
 class ComposeActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.S)
-
+    //private var soundPoolBuilder: SoundPool.Builder = SoundPool.Builder()
     override fun onCreate(savedInstanceState: Bundle?) {
+        //soundPoolBuilder.setMaxStreams(5)
+        //val player = soundPoolBuilder.build()
         println("beforetune")
+        //player.stop(stream)
         val tempIcon = Icons.Default.Info
         super.onCreate(savedInstanceState)
 
@@ -126,10 +132,11 @@ class ComposeActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         for (i in 0..7) {
-                            bar1Image[i] = "Bass"
-                            bar2Image[i] = "Bass"
-                            bar1ImageIcons[i] = R.drawable.bass
-                            bar2ImageIcons[i] = R.drawable.bass
+
+                            bar1Image[i] = "None"
+                            bar2Image[i] = "None"
+                            bar1ImageIcons[i] = R.drawable.none
+                            bar2ImageIcons[i] = R.drawable.none
                         }
                     }, Modifier
                         .fillMaxWidth()
@@ -148,16 +155,22 @@ class ComposeActivity : ComponentActivity() {
                     for (i in 0..7) {
                         IconButton(
                             onClick = {
-
+                                val mp = MediaPlayer.create(context, R.raw.clave_short)
+                                mp.start()
+                                //val stream = player.play(R.raw.clave_short, 0.5f, 0.5f, 1, -1, 1.0f)
                                 if (bar1Image[i] == "Bass") {
                                     bar1Image[i] = "Slap"
                                 } else if (bar1Image[i] == "Slap") {
+                                    bar1Image[i] = "Tone"
+                                } else if (bar1Image[i] == "Tone") {
+                                    bar1Image[i] = "None"
+                                } else if (bar1Image[i] == "None") {
                                     bar1Image[i] = "Bass"
                                 }
                                 bar1ImageIcons[i] = updateComposeIcon(bar1Image[i])
                             },
                         ) {
-                            Icon(painterResource(bar1ImageIcons[i]), "Info", tint = LightOrange)
+                            Icon(painterResource(bar1ImageIcons[i]), "Info")
                         }
                     }
                     //val num1 = findViewById<EditText>(R.id.num1)
@@ -176,12 +189,16 @@ class ComposeActivity : ComponentActivity() {
                                 if (bar2Image[i] == "Bass") {
                                     bar2Image[i] = "Slap"
                                 } else if (bar2Image[i] == "Slap") {
+                                    bar2Image[i] = "Tone"
+                                } else if (bar2Image[i] == "Tone") {
+                                    bar2Image[i] = "None"
+                                } else if (bar2Image[i] == "None") {
                                     bar2Image[i] = "Bass"
                                 }
                                 bar2ImageIcons[i] = updateComposeIcon(bar2Image[i])
                             },
                         ) {
-                            Icon(painterResource(bar2ImageIcons[i]), "Info", tint = LightOrange)
+                            Icon(painterResource(bar2ImageIcons[i]), "Info")
                         }
                     }
                     //val num1 = findViewById<EditText>(R.id.num1)

@@ -113,9 +113,9 @@ fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()
 // Function to display spectrogram
 @Composable
 fun Spectrogram(spectrogram: MutableList<List<Double>>){
-    //Canvas(modifier = Modifier.fillMaxSize().padding(20.dp).background(Color.hsv(300f,0.1f,0.85f))) {
-        //val bitmap = createScaledSpectrogramBitmap(spectrogram,size.width,size.height)
-        //drawImage(image=bitmap.asImageBitmap())
-    //}
+    Canvas(modifier = Modifier.fillMaxSize().padding(20.dp).background(Color.hsv(300f,0.1f,0.85f))) {
+        val bitmap = createScaledSpectrogramBitmap(spectrogram,size.width,size.height)
+        drawImage(image=bitmap.asImageBitmap())
+    }
 }
 
