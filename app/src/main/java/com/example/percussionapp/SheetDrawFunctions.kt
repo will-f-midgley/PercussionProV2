@@ -287,7 +287,7 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
 @Composable
 fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,currentNote:Int){
     var notesWidth by remember{ mutableIntStateOf(0) }
-    //notesWidth = notesWidth/2
+    notesWidth = notesWidth
     var style by mutableIntStateOf(R.drawable.bass)
     //val style2 = style.intValue
     //val test = mutableIntStateOf(R.drawable.bass)
@@ -299,7 +299,7 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
             contentDescription = "Start indicator",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ IntOffset((notesWidth * -0.06f).toInt(),0) },
+                .offset{ IntOffset((notesWidth * 0.08f).toInt(),0) },
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.Black)
         )
@@ -308,7 +308,7 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
             contentDescription = "Bar",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ val noteLineOffset = ((notesWidth * 0.92f * barProgress) - (notesWidth * 0.06f)).toInt()
+                .offset{ val noteLineOffset = ((notesWidth * 0.84f * barProgress) + (notesWidth * 0.08f)).toInt()
                     IntOffset(noteLineOffset,0) }
                 .zIndex(1f),
             contentScale = ContentScale.Fit,
@@ -319,7 +319,7 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
             contentDescription = "End indicator",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ IntOffset((notesWidth * 0.86f).toInt()*8,0) },
+                .offset{ IntOffset((notesWidth * 0.92f).toInt(),0) },
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.Black)
         )
