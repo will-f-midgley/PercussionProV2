@@ -217,10 +217,10 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
             noteColour = Color.Blue
             textColour = Color.Blue
             timeText = "SKIP"
-            queue.add(0)
+            queue.add(100)
         }
         totalHit += 1
-        println(totalHit)
+        //println(totalHit)
         //println(calculatePercentage(queue))
 
     }
@@ -238,7 +238,7 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
             alpha = noteAlpha.value,
             center = Offset(
                 //(screenWidth.value * -0.12f)
-                size.width * 0.03f + ((notesWidth * 0.92f * barProgress)),
+                size.width * 0.06f + ((notesWidth * 0.84f * barProgress) + (notesWidth * 0.08f)).toInt(),
                 size.height * 0.5f
             )
         )

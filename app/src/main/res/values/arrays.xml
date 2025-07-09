@@ -5,20 +5,20 @@
         <item>None</item>
         <item>None</item>
         <item>Tone</item>
-        <item>Bass</item>
         <item>Slap</item>
+        <item>None</item>
         <item>Bass</item>
-        <item>Slap</item>
+        <item>None</item>
     </string-array>
     <string-array name="merengue2">
-        <item>Slap</item>
-        <item>Slap</item>
-        <item>Slap</item>
-        <item>Slap</item>
-        <item>Slap</item>
-        <item>Slap</item>
         <item>Bass</item>
+        <item>Bass</item>
+        <item>None</item>
+        <item>Tone</item>
         <item>Slap</item>
+        <item>None</item>
+        <item>Bass</item>
+        <item>None</item>
     </string-array>
     <string-array name="guaguanco1">
         <item>Bass</item>
