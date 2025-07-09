@@ -89,7 +89,6 @@ namespace percussionapp {
         int currentPatternEvent = 0;
         int currentBar = 1;
         int difficulty = 1;
-
         int latency = 150;
         int earlyOffsetMs = 60;
         int lateOffsetMs = earlyOffsetMs;

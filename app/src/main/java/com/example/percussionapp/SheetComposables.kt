@@ -165,6 +165,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
     //println("inPracticeview")
     val notesPlayed by mutableStateOf(engineVM.notesPlayed.observeAsState().value)
     val waveform by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
+    val difference by mutableStateOf(engineVM.difference.observeAsState().value)
     val currentBar by mutableStateOf(engineVM.currentBar.observeAsState().value)
     val currentNote by mutableStateOf(engineVM.currentNote.observeAsState().value)
     //val currentBeat by mutableStateOf(engineVM.currentBeat.observeAsState().value)
@@ -179,7 +180,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
     LaunchedEffect(metronome.value) { engineVM.toggleMetronome(metronome.value) }
     val tempo = remember { mutableIntStateOf(120) }
     LaunchedEffect(tempo.intValue) { engineVM.changeTempo(tempo.intValue) }
-
+    println("diff ::: $notesPlayed")
     val currentSpectrogramBitmap = remember {
         mutableStateOf(
             createScaledSpectrogramBitmap(

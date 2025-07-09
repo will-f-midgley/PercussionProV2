@@ -10,6 +10,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.ui.geometry.Size
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -66,6 +67,7 @@ import java.io.File
 import kotlin.io.path.exists
 
 val queue = mutableListOf<Int>()
+val recentHits = mutableListOf<Int>(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
 var totalHit = 0
 
 @Composable
@@ -161,6 +163,7 @@ fun calculatePercentage(last20: MutableList<Int>): Int {
         sum += last20[i].toInt()
     }
     return sum/last20.size
+
 }
 
 //display showing early, late, miss etc.
@@ -193,21 +196,27 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
         if (queue.size > 19) {
             queue.removeAt(0)
         }
+        if (recentHits.size > 19) {
+            recentHits.removeAt(0)
+        }
         if (currentNote == 0) {
             noteColour = Color.Green
             textColour = noteColour
             timeText = "GOOD"
             queue.add(100)
+            recentHits.add((-100..100).random())
         } else if (currentNote == 1) {
             noteColour = Color.hsv(35f, 1f, 1f)
             textColour = noteColour
             timeText = "EARLY"
             queue.add(50)
+            recentHits.add((-300..-100).random())
         } else if (currentNote == 2) {
             noteColour = Color.Magenta
             textColour = noteColour
             timeText = "LATE"
             queue.add(50)
+            recentHits.add((100..300).random())
         } else if (currentNote == -1) {
             noteColour = Color.Transparent
             textColour = Color.Red
@@ -225,12 +234,23 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
 
     }
     val percentText = calculatePercentage(queue).toString() + "%"
-
+    // Canvas in charge of creating the live timing bar.
+    Canvas (Modifier.zIndex(0.91f).offset{ IntOffset(900,400) }) {
+    drawRect(color = Color.hsv(0f, 0f, 0f), topLeft = Offset(0f, 0f), size = Size(600f,50f))
+    drawRect(color = Color.hsv(180f, 1f, 1f), topLeft = Offset(295f, 0f), size = Size(10f,50f))
+    for (i in 0..(recentHits.size-1)) {
+        // i * 5f is used to have the alpha value decrease over time so that newer hits appear fresher.
+        drawRect(color = Color.hsv(180f, 1f, 1f, (i * .05f)), topLeft = Offset((297f + recentHits[i]), 0f), size = Size(6f,50f))
+    }
+    }
     Canvas(
         Modifier
             .width((notesWidth * 0.364).dp).then(Modifier.fillMaxHeight())
             .zIndex(0.9f)
     ) {
+
+
+
         drawCircle(
             //Color.hsv(22f, .9f, .9f)
             color = noteColour,
