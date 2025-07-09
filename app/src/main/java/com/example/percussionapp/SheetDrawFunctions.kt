@@ -267,7 +267,7 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
             alpha = noteAlpha.value,
             center = Offset(
                 //(screenWidth.value * -0.12f)
-                size.width * 0.06f + ((notesWidth * 0.84f * barProgress) + (notesWidth * 0.09f)).toInt(),
+                scaledWidth * 0.1f + (scaledWidth * 0.7f * barProgress),
                 size.height * 0.5f
             )
         )
@@ -327,34 +327,35 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
     //val style2 = style.intValue
     //val test = mutableIntStateOf(R.drawable.bass)
     //val test2 = test.intValue
+    Text(text = "test")
     Box(contentAlignment = Alignment.CenterStart) {
         Image(
             
-            painter = painterResource(R.drawable.note_line),
+            painter = painterResource(R.drawable.note_line2),
             contentDescription = "Start indicator",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ IntOffset((scaledWidth*0.1).toInt(),0) },
+                .offset{ IntOffset((scaledWidth*0.1).toInt(),100) },
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.Black)
         )
         Image(
-            painter = painterResource(R.drawable.note_line),
+            painter = painterResource(R.drawable.note_line2),
             contentDescription = "Bar",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ val noteLineOffset = ((notesWidth * 0.84f * barProgress) + (notesWidth * 0.09f)).toInt()
+                .offset{ val noteLineOffset = ((scaledWidth*0.7 * barProgress) + (scaledWidth*0.1)).toInt()
                     IntOffset(noteLineOffset,0) }
                 .zIndex(1f),
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.hsv(210f,1f,0.8f,0.7f))
         )
         Image(
-            painter = painterResource(R.drawable.note_line),
+            painter = painterResource(R.drawable.note_line2),
             contentDescription = "End indicator",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ IntOffset((scaledWidth*0.8).toInt(),0) },
+                .offset{ IntOffset((scaledWidth*0.8).toInt(),100) },
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.Black)
         )
@@ -365,8 +366,8 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
         notesWidth = (imageSize.width*16).toInt()
 
         Row(
-            Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.Center
+            Modifier.fillMaxWidth(0.7f).offset{ IntOffset((scaledWidth*0.1).toInt(),0) },
+            horizontalArrangement = Arrangement.Center,
         ) {
             for (i in 0..7) {
                 var note = currentNotes[i]
@@ -384,8 +385,9 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
                     contentDescription = "res$i",
                     modifier = Modifier
                         //.offset{ IntOffset((notesWidth * i).toInt(),0) }
+                        .weight(1f)
                         .aspectRatio(0.5f)
-                        .fillMaxSize()
+                        //.fillMaxSize()
 
                     //contentScale = ContentScale.Crop
                 )
