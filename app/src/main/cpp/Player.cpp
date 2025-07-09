@@ -126,7 +126,7 @@ namespace percussionapp {
         //sometimes the current note is in the next iteration of the pattern, so we need to take the mod
         int currentEventInBar = currentPatternEvent % currentPattern.size();
 
-        float correctTime = beatsToMillis(currentPattern[currentEventInBar][0]) + 125.0;
+        float correctTime = beatsToMillis(currentPattern[currentEventInBar][0]);
         //LOG("time: %lld", timePlayedFromPatternStart);
         //LOG("correct time: %f ", correctTime);
         //LOG("((int)correctTime + patternLengthMs) mod patternLengthMs: %d",((int)correctTime + patternLengthMs) % patternLengthMs + 1);
@@ -254,7 +254,7 @@ namespace percussionapp {
     }
 
     float Player::beatsToMillis(float beats) const {
-        return beats * beatLengthMilliseconds;
+        return beats * beatLengthMilliseconds + 125;
     }
 
 } // percussionapp

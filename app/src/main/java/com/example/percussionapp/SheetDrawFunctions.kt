@@ -238,7 +238,7 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
             alpha = noteAlpha.value,
             center = Offset(
                 //(screenWidth.value * -0.12f)
-                size.width * 0.06f + ((notesWidth * 0.84f * barProgress) + (notesWidth * 0.08f)).toInt(),
+                size.width * 0.06f + ((notesWidth * 0.84f * barProgress) + (notesWidth * 0.09f)).toInt(),
                 size.height * 0.5f
             )
         )
@@ -263,7 +263,7 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
                 ),
             )
 
-        drawText(
+        """drawText(
             measuredText,
             topLeft = Offset(
                 notesWidth * -0.02f + (notesWidth * 0.92f * (barProgress)),
@@ -271,7 +271,7 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
             ),
             color = textColour,
             alpha = textAlpha.value
-        )
+        )"""
 
         drawText(
             measuredPercent,
@@ -299,7 +299,7 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
             contentDescription = "Start indicator",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ IntOffset((notesWidth * 0.08f).toInt(),0) },
+                .offset{ IntOffset((notesWidth * 0.09f).toInt(),0) },
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.Black)
         )
@@ -308,7 +308,7 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
             contentDescription = "Bar",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ val noteLineOffset = ((notesWidth * 0.84f * barProgress) + (notesWidth * 0.08f)).toInt()
+                .offset{ val noteLineOffset = ((notesWidth * 0.84f * barProgress) + (notesWidth * 0.09f)).toInt()
                     IntOffset(noteLineOffset,0) }
                 .zIndex(1f),
             contentScale = ContentScale.Fit,
@@ -319,7 +319,7 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
             contentDescription = "End indicator",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ IntOffset((notesWidth * 0.92f).toInt(),0) },
+                .offset{ IntOffset((notesWidth * 0.93f).toInt(),0) },
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.Black)
         )
