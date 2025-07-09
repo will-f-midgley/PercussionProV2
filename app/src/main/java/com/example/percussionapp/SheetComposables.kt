@@ -1,8 +1,12 @@
 package com.example.percussionapp
 
+
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Build
+import android.os.Environment
+import android.view.WindowMetrics
+import android.util.DisplayMetrics
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -11,9 +15,6 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import android.os.Environment
-
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,24 +38,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import kotlin.io.path.exists
-import java.io.File
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,12 +59,16 @@ import com.example.percussionapp.ui.theme.LightOrange
 import com.example.percussionapp.ui.theme.PercussionAppTheme
 import com.example.percussionapp.ui.theme.StrongBrown
 import com.example.percussionapp.ui.theme.VeryLightOrange
+import java.io.File
+
 
 public var bar1Image = arrayOf("Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass")
 public var bar2Image = arrayOf("Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap")
 
+
 fun getCustomArray(context: android.content.Context, barNum: Int) : Array<String> {
     val externalDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+
     if (externalDir != null && !externalDir.exists()) {
         externalDir.mkdirs()
         println("making file")
@@ -180,7 +181,6 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
     LaunchedEffect(metronome.value) { engineVM.toggleMetronome(metronome.value) }
     val tempo = remember { mutableIntStateOf(120) }
     LaunchedEffect(tempo.intValue) { engineVM.changeTempo(tempo.intValue) }
-    println("diff ::: $notesPlayed")
     val currentSpectrogramBitmap = remember {
         mutableStateOf(
             createScaledSpectrogramBitmap(
@@ -238,19 +238,23 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
             }
         }
     ) { innerPadding ->
-        Box(Modifier.fillMaxSize().background(VeryLightOrange))
+        Box(Modifier
+            .fillMaxSize()
+            .background(VeryLightOrange))
         //val imageModifier = Modifier.width(100.dp)
         if (settings && !info) {
             Box(
                 Modifier
-                    .padding(innerPadding).background(VeryLightOrange)
+                    .padding(innerPadding)
+                    .background(VeryLightOrange)
             ) {
                 SheetSettings(spectrogramOn, metronome, accuracy, latency,tempo)
             }
         } else if (info && !settings) {
             Box(
                 Modifier
-                    .padding(innerPadding).background(VeryLightOrange)
+                    .padding(innerPadding)
+                    .background(VeryLightOrange)
             ) {
                 NoteInfo()
             }
@@ -259,7 +263,8 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
             //
             Box(
                 Modifier
-                    .padding(innerPadding).padding(top = 20.dp)
+                    .padding(innerPadding)
+                    .padding(top = 20.dp)
             ) {
                 //var helpTextAlpha by remember{ mutableFloatStateOf(1f) } //remember{Animatable(1f)};
                 StartPracticeButton(engineVM,playing!!,style)
@@ -271,8 +276,8 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
-                        .fillMaxHeight(0.3f)
-                        .offset(30.dp, (160).dp)
+                            .fillMaxHeight(0.3f)
+                            .offset(30.dp, (160).dp)
 
                     ) {
                         for (i in 0..7) {
@@ -304,7 +309,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
                 Spacer(Modifier.fillMaxHeight(SHEET_MUSIC_HEIGHT/2))
                 TypeHit(waveform!!)
                 //spectrogram display
-                FreqCanvas(waveform!!,spectrogramOn.value, currentSpectrogramBitmap,lastSpectrogramBitmap,notesPlayed!!,currentNote!!)
+                //FreqCanvas(waveform!!,spectrogramOn.value, currentSpectrogramBitmap,lastSpectrogramBitmap,notesPlayed!!,currentNote!!)
 
             }
         }
@@ -319,10 +324,14 @@ fun BarUpdate(currentBar: Int, barProgress:Animatable<Float, AnimationVector1D>,
     var bars by remember { mutableStateOf(0) }
     var res1 = getSheetRes(style,1,context)
     var res2 = getSheetRes(style,2,context)
-
+    val config = LocalConfiguration.current
+    val screenwidth = config.screenWidthDp
+    val screenheight = config.screenHeightDp
 
     //when starting, the barline will often move before the song has started - this removes it
     LaunchedEffect(currentBar) {
+
+        //println("width -- $screenwidth, height -- $screenheight")
         println("bars ------ $currentBar")
         bars++
         if (bars > 1) {
@@ -344,6 +353,7 @@ fun BarUpdate(currentBar: Int, barProgress:Animatable<Float, AnimationVector1D>,
 
 @Composable
 fun StartPracticeButton(engineVM: AudioEngineViewModel,playing:Boolean, style:Genre) {
+
     Row(Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.End){
         Button(
             onClick = {

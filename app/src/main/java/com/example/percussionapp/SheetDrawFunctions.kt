@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -235,7 +236,15 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
     }
     val percentText = calculatePercentage(queue).toString() + "%"
     // Canvas in charge of creating the live timing bar.
-    Canvas (Modifier.zIndex(0.91f).offset{ IntOffset(900,400) }) {
+    val config = LocalConfiguration.current
+    val density = LocalDensity.current.density
+    val screenWidth = config.screenWidthDp
+    val screenHeight = config.screenHeightDp
+    val scaledWidth = screenWidth * density
+    val scaledHeight = screenHeight * density
+
+    //println(screenWidth)
+    Canvas (Modifier.zIndex(0.90f).offset{ IntOffset((scaledWidth*0.5-300f).toInt(),(scaledHeight*0.5-60f).toInt()) }) {
     drawRect(color = Color.hsv(0f, 0f, 0f), topLeft = Offset(0f, 0f), size = Size(600f,50f))
     drawRect(color = Color.hsv(180f, 1f, 1f), topLeft = Offset(295f, 0f), size = Size(10f,50f))
     for (i in 0..(recentHits.size-1)) {
@@ -306,6 +315,12 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
 
 @Composable
 fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,currentNote:Int){
+    val config = LocalConfiguration.current
+    val density = LocalDensity.current.density
+    val screenWidth = config.screenWidthDp
+    val screenHeight = config.screenHeightDp
+    val scaledWidth = screenWidth * density
+    val scaledHeight = screenHeight * density
     var notesWidth by remember{ mutableIntStateOf(0) }
     notesWidth = notesWidth
     var style by mutableIntStateOf(R.drawable.bass)
@@ -319,7 +334,7 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
             contentDescription = "Start indicator",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ IntOffset((notesWidth * 0.09f).toInt(),0) },
+                .offset{ IntOffset((scaledWidth*0.1).toInt(),0) },
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.Black)
         )
@@ -339,7 +354,7 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
             contentDescription = "End indicator",
             modifier = Modifier
                 .fillMaxHeight(0.6f)
-                .offset{ IntOffset((notesWidth * 0.93f).toInt(),0) },
+                .offset{ IntOffset((scaledWidth*0.8).toInt(),0) },
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.Black)
         )
