@@ -110,22 +110,22 @@ fun TypeHit(waveform: DoubleArray) {
             }
         }
         if (diffBass < diffSlap && diffBass < diffTone) {
-            println("diffBass = $diffBass")
+            //println("diffBass = $diffBass")
             noteHit = "Bass"
             if (bar1Image[totalHit%8] == "Bass") {
-                println("CORRECT HIT!!!!!!")
+                //println("CORRECT HIT!!!!!!")
             }
         } else if (diffTone < diffBass && diffTone < diffSlap) {
-            println("diffTone = $diffTone")
+            //("diffTone = $diffTone")
             noteHit = "Tone"
             if (bar1Image[totalHit%8] == "Tone") {
-                println("CORRECT HIT!!!!!!")
+                //println("CORRECT HIT!!!!!!")
             }
         } else {
-            println("diffSlap = $diffSlap")
+            //println("diffSlap = $diffSlap")
             noteHit = "Slap"
             if (bar1Image[totalHit%8] == "Slap") {
-                println("CORRECT HIT!!!!!!")
+                //println("CORRECT HIT!!!!!!")
             }
         }
     }
@@ -244,7 +244,7 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
     val scaledHeight = screenHeight * density
 
     //println(screenWidth)
-    Canvas (Modifier.zIndex(0.90f).offset{ IntOffset((scaledWidth*0.5-300f).toInt(),(scaledHeight*0.5-60f).toInt()) }) {
+    Canvas (Modifier.zIndex(0.90f).offset{ IntOffset((900f).toInt(),(400f).toInt()) }) {
     drawRect(color = Color.hsv(0f, 0f, 0f), topLeft = Offset(0f, 0f), size = Size(600f,50f))
     drawRect(color = Color.hsv(180f, 1f, 1f), topLeft = Offset(295f, 0f), size = Size(10f,50f))
     for (i in 0..(recentHits.size-1)) {

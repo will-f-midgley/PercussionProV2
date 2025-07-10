@@ -332,7 +332,7 @@ fun BarUpdate(currentBar: Int, barProgress:Animatable<Float, AnimationVector1D>,
     LaunchedEffect(currentBar) {
 
         //println("width -- $screenwidth, height -- $screenheight")
-        println("bars ------ $currentBar")
+        //println("bars ------ $currentBar")
         bars++
         if (bars > 1) {
             barProgress.animateTo(0f, snap())

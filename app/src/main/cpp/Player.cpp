@@ -122,7 +122,7 @@ namespace percussionapp {
 
         long long timePlayedFromPatternStart = (timePlayed - patternStartMs - latency) % patternLengthMs;
         float temp = currentPattern[currentPatternEvent][1];
-        LOG("%f", temp);
+        //LOG("%f", temp);
         //sometimes the current note is in the next iteration of the pattern, so we need to take the mod
         int currentEventInBar = currentPatternEvent % currentPattern.size();
 
@@ -132,7 +132,7 @@ namespace percussionapp {
         //LOG("((int)correctTime + patternLengthMs) mod patternLengthMs: %d",((int)correctTime + patternLengthMs) % patternLengthMs + 1);
         //LOG("correctTime + patternLengthMs: %f" , correctTime + patternLengthMs);
         //LOG("difference = %f for %d", (correctTime - timePlayedFromPatternStart), currentEventInBar);
-        LOG("My time - %lld , correct time - %f", timePlayedFromPatternStart, correctTime);
+        //LOG("My time - %lld , correct time - %f", timePlayedFromPatternStart, correctTime);
         // ON TIME
         if ((timePlayedFromPatternStart <= correctTime &&
              timePlayedFromPatternStart > correctTime - earlyOffsetMs) ||
@@ -145,7 +145,7 @@ namespace percussionapp {
             //LOG("correctTime = %d", correctTime);
             //LOG("EVENT INDEX: %d",eventIndex);
             updateCurrentPatternEvent();
-            LOG("ON TIME");
+           // LOG("ON TIME");
             return 0;
         }
         //EARLY
