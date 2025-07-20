@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import android.media.MediaPlayer
 import kotlin.math.log
 import java.util.Arrays
 import java.io.File
@@ -144,7 +145,7 @@ fun TypeHit(waveform: DoubleArray) {
         modifier = Modifier.fillMaxSize().padding(20.dp).padding(top = 50.dp)
             /*.background(Color.hsv(300f, 0.1f, 0.85f))*/.graphicsLayer()
     ) {
-        drawText(
+        """drawText(
             measuredText,
             topLeft = Offset(
                 5 * -0.02f + (5 * 0.92f * (5)),
@@ -152,7 +153,7 @@ fun TypeHit(waveform: DoubleArray) {
             ),
             color = textColour,
             alpha = textAlpha.value
-        )
+        )"""
     }
 }
 
@@ -169,8 +170,8 @@ fun calculatePercentage(last20: MutableList<Int>): Int {
 
 //display showing early, late, miss etc.
 @Composable
-fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNote:Int){
-
+fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNote:Int, currentNotes: Array<String>, noteAudio: MutableState<Boolean>){
+    val context = LocalContext.current
     val noteAlpha = remember { Animatable(1f) }
     val textAlpha = remember { Animatable(1f) }
     val noteSize = remember { Animatable(120f) }
@@ -229,9 +230,23 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
             timeText = "SKIP"
             queue.add(100)
         }
+
+        var currentStroke = currentNotes[totalHit%8]
+        if (noteAudio.value) {
+            if (currentStroke == "Slap") {
+                val noteAudio = MediaPlayer.create(context, R.raw.slap)
+                noteAudio.start()
+            } else if (currentStroke == "Bass") {
+                val noteAudio = MediaPlayer.create(context, R.raw.bass)
+                noteAudio.start()
+            } else if (currentStroke == "Tone") {
+                val noteAudio = MediaPlayer.create(context, R.raw.tone)
+                noteAudio.start()
+            }
+        }
         totalHit += 1
         //println(totalHit)
-        //println(calculatePercentage(queue))
+
 
     }
     val percentText = calculatePercentage(queue).toString() + "%"
@@ -245,13 +260,14 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
 
     //println(screenWidth)
     Canvas (Modifier.zIndex(0.90f).offset{ IntOffset((900f).toInt(),(400f).toInt()) }) {
-    drawRect(color = Color.hsv(0f, 0f, 0f), topLeft = Offset(0f, 0f), size = Size(600f,50f))
-    drawRect(color = Color.hsv(180f, 1f, 1f), topLeft = Offset(295f, 0f), size = Size(10f,50f))
-    for (i in 0..(recentHits.size-1)) {
-        // i * 5f is used to have the alpha value decrease over time so that newer hits appear fresher.
-        drawRect(color = Color.hsv(180f, 1f, 1f, (i * .05f)), topLeft = Offset((297f + recentHits[i]), 0f), size = Size(6f,50f))
+        drawRect(color = Color.hsv(0f, 0f, 0f), topLeft = Offset(0f, 0f), size = Size(600f,50f))
+        drawRect(color = Color.hsv(180f, 1f, 1f), topLeft = Offset(295f, 0f), size = Size(10f,50f))
+        for (i in 0..(recentHits.size-1)) {
+         //i * 5f is used to have the alpha value decrease over time so that newer hits appear fresher.
+            drawRect(color = Color.hsv(180f, 1f, 1f, (i * .05f)), topLeft = Offset((297f + recentHits[i]), 0f), size = Size(6f,50f))
+        }
     }
-    }
+
     Canvas(
         Modifier
             .width((notesWidth * 0.364).dp).then(Modifier.fillMaxHeight())
@@ -314,7 +330,7 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
 }
 
 @Composable
-fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,currentNote:Int){
+fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,currentNote:Int, noteAudio: MutableState<Boolean>){
     val config = LocalConfiguration.current
     val density = LocalDensity.current.density
     val screenWidth = config.screenWidthDp
@@ -327,18 +343,8 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
     //val style2 = style.intValue
     //val test = mutableIntStateOf(R.drawable.bass)
     //val test2 = test.intValue
-    Text(text = "test")
     Box(contentAlignment = Alignment.CenterStart) {
-        Image(
-            
-            painter = painterResource(R.drawable.note_line2),
-            contentDescription = "Start indicator",
-            modifier = Modifier
-                .fillMaxHeight(0.6f)
-                .offset{ IntOffset((scaledWidth*0.1).toInt(),100) },
-            contentScale = ContentScale.Fit,
-            colorFilter = ColorFilter.tint(color = Color.Black)
-        )
+
         Image(
             painter = painterResource(R.drawable.note_line2),
             contentDescription = "Bar",
@@ -349,15 +355,6 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
                 .zIndex(1f),
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(color = Color.hsv(210f,1f,0.8f,0.7f))
-        )
-        Image(
-            painter = painterResource(R.drawable.note_line2),
-            contentDescription = "End indicator",
-            modifier = Modifier
-                .fillMaxHeight(0.6f)
-                .offset{ IntOffset((scaledWidth*0.8).toInt(),100) },
-            contentScale = ContentScale.Fit,
-            colorFilter = ColorFilter.tint(color = Color.Black)
         )
 
         var notesImage = painterResource(style)
@@ -395,15 +392,14 @@ fun Notes(barProgress: Float, currentNotes: Array<String>, notesPlayed: Int,curr
         }
 
 
-
-        NoteFeedback(barProgress,notesPlayed, notesWidth,currentNote)
+        NoteFeedback(barProgress,notesPlayed, notesWidth,currentNote, currentNotes, noteAudio)
 
     }
 }
 
 // a lot of adaptive sizing is used to keep the view consistent between different screen sizes
 @Composable
-fun PercussionStave(barProgress: Float, bar1Image: Array<String>,notesPlayed:Int,currentNote:Int){
+fun PercussionStave(barProgress: Float, bar1Image: Array<String>,notesPlayed:Int,currentNote:Int,noteAudio: MutableState<Boolean>){
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 
@@ -414,7 +410,7 @@ fun PercussionStave(barProgress: Float, bar1Image: Array<String>,notesPlayed:Int
         Row(Modifier.fillMaxSize()/*.background(Color.hsv(100f,0.9f,0.8f,0.5f))*/, verticalAlignment = Alignment.CenterVertically) {
 
             Box(contentAlignment = Alignment.CenterStart) {
-                Notes(barProgress, bar1Image,notesPlayed,currentNote)
+                Notes(barProgress, bar1Image,notesPlayed,currentNote, noteAudio)
             }
         }
         Row(modifier = Modifier.fillMaxWidth(),

@@ -92,7 +92,7 @@ fun NoteInfo(){
     }
 }
 @Composable
-fun SheetSettings(spectrogramOn: MutableState<Boolean>, metronome: MutableState<Boolean>, accuracy: MutableState<Int>, latency: MutableState<Int>, tempo: MutableState<Int>){
+fun SheetSettings(spectrogramOn: MutableState<Boolean>, metronome: MutableState<Boolean>, accuracy: MutableState<Int>, latency: MutableState<Int>, tempo: MutableState<Int>, noteAudio: MutableState<Boolean>){
     Row(
         Modifier.fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically) {
@@ -102,6 +102,7 @@ fun SheetSettings(spectrogramOn: MutableState<Boolean>, metronome: MutableState<
                 .fillMaxSize().weight(1f)
         ) {
             Setting("Show spectrogram:", spectrogramOn)
+            Setting("Note Audio:", noteAudio)
             Setting("Metronome:",metronome)
             Setting("Tempo:", "BPM of the backing track",tempo,IntRange(50,250))
         }

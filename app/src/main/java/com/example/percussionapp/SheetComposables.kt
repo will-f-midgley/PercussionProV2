@@ -204,6 +204,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
     var settings by remember { mutableStateOf(false) }
     var info by remember { mutableStateOf(false) }
     val spectrogramOn = remember { mutableStateOf(false) }
+    val noteAudio = remember {mutableStateOf(false)}
     val barProgress = remember { Animatable(0f) }
 
     BarUpdate(currentBar!!,barProgress, style, tempo.intValue)
@@ -248,7 +249,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
                     .padding(innerPadding)
                     .background(VeryLightOrange)
             ) {
-                SheetSettings(spectrogramOn, metronome, accuracy, latency,tempo)
+                SheetSettings(spectrogramOn, metronome, accuracy, latency,tempo, noteAudio)
             }
         } else if (info && !settings) {
             Box(
@@ -268,7 +269,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
             ) {
                 //var helpTextAlpha by remember{ mutableFloatStateOf(1f) } //remember{Animatable(1f)};
                 StartPracticeButton(engineVM,playing!!,style)
-                PercussionStave(barProgress.value, bar1Image,notesPlayed!!,currentNote!!)
+                PercussionStave(barProgress.value, bar1Image,notesPlayed!!,currentNote!!, noteAudio)
                 if(!spectrogramOn.value) {
                     Text("NEXT:", Modifier.offset(7.dp, 140.dp))
                     //Text("Place your phone 10cm from your instrument", Modifier.alpha(helpTextAlpha).offset(200.dp, 140.dp))
