@@ -162,6 +162,7 @@ fun SpectrogramUpdate(waveform: DoubleArray,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
+
     val context = LocalContext.current
     //println("inPracticeview")
     val notesPlayed by mutableStateOf(engineVM.notesPlayed.observeAsState().value)
@@ -272,6 +273,8 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
                 PercussionStave(barProgress.value, bar1Image,notesPlayed!!,currentNote!!, noteAudio)
                 if(!spectrogramOn.value) {
                     Text("NEXT:", Modifier.offset(7.dp, 140.dp))
+                    Text("TIMING", Modifier.offset(610.dp, 200.dp))
+                    Text("HIT ACCURACY", Modifier.offset(735.dp, 200.dp))
                     //Text("Place your phone 10cm from your instrument", Modifier.alpha(helpTextAlpha).offset(200.dp, 140.dp))
 
                     Row(

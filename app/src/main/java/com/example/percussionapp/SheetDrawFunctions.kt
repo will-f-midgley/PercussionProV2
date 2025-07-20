@@ -70,6 +70,7 @@ import kotlin.io.path.exists
 
 val queue = mutableListOf<Int>()
 val recentHits = mutableListOf<Int>(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+val recentAccuracy = mutableListOf<Int>()
 var totalHit = 0
 
 @Composable
@@ -90,7 +91,7 @@ fun TypeHit(waveform: DoubleArray) {
 
     val sharedPreference = activityContext.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE)
     var noteHit by remember { mutableStateOf("None") }
-    if (waveform[0] > 10) {
+    if (waveform[0] > 40) {
         val rawSlap = sharedPreference.getString("Slap", "0")
         var slapArray = rawSlap?.split(",")
         val rawBass = sharedPreference.getString("Bass", "0")
@@ -110,24 +111,31 @@ fun TypeHit(waveform: DoubleArray) {
                 diffTone = diffTone + (toneArray[i].toDouble() - peaksArray[i]) * (toneArray[i].toDouble() - peaksArray[i])
             }
         }
+        println(diffSlap)
+        println(diffBass)
+        println(diffTone)
+        println("-------------")
         if (diffBass < diffSlap && diffBass < diffTone) {
             //println("diffBass = $diffBass")
             noteHit = "Bass"
             if (bar1Image[totalHit%8] == "Bass") {
-                //println("CORRECT HIT!!!!!!")
-            }
+                recentAccuracy.add(100)
+            } else {recentAccuracy.add(0)}
         } else if (diffTone < diffBass && diffTone < diffSlap) {
             //("diffTone = $diffTone")
             noteHit = "Tone"
             if (bar1Image[totalHit%8] == "Tone") {
-                //println("CORRECT HIT!!!!!!")
-            }
-        } else {
+                recentAccuracy.add(100)
+            } else {recentAccuracy.add(0)}
+        } else if (diffSlap < diffBass && diffSlap < diffTone) {
             //println("diffSlap = $diffSlap")
             noteHit = "Slap"
             if (bar1Image[totalHit%8] == "Slap") {
-                //println("CORRECT HIT!!!!!!")
-            }
+                recentAccuracy.add(100)
+            } else {recentAccuracy.add(0)}
+        }
+        if (recentAccuracy.size > 19) {
+            recentAccuracy.removeAt(0)
         }
     }
 
@@ -250,6 +258,8 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
 
     }
     val percentText = calculatePercentage(queue).toString() + "%"
+    val accuracyText = calculatePercentage(recentAccuracy).toString() + "%"
+
     // Canvas in charge of creating the live timing bar.
     val config = LocalConfiguration.current
     val density = LocalDensity.current.density
@@ -308,6 +318,16 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
                 ),
             )
 
+        val measuredAccuracy =
+            textMeasurer.measure(
+                accuracyText,
+                style = TextStyle(
+                    fontSize = 30.sp,
+                    fontFamily = FontFamily.SansSerif,
+                    fontWeight = FontWeight.Bold
+                ),
+            )
+
         """drawText(
             measuredText,
             topLeft = Offset(
@@ -317,11 +337,22 @@ fun NoteFeedback(barProgress: Float, notesPlayed:Int, notesWidth: Int, currentNo
             color = textColour,
             alpha = textAlpha.value
         )"""
+        // Timing Text
+        //val accuracyColour = colour
+
 
         drawText(
             measuredPercent,
             topLeft = Offset(1600f, 600f),
             color = textColour
+        )
+        // Accuracy Text
+
+
+        drawText(
+            measuredAccuracy,
+            topLeft = Offset(2000f, 600f),
+            color = Color.hsv(0f, .50f, .40f)
         )
 
 
