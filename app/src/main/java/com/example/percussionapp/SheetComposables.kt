@@ -71,7 +71,6 @@ fun getCustomArray(context: android.content.Context, barNum: Int) : Array<String
 
     if (externalDir != null && !externalDir.exists()) {
         externalDir.mkdirs()
-        println("making file")
         var eternalFile = File(externalDir, "custom.txt")
         eternalFile.writeText("Bass,Bass,Bass,Bass,Bass,Bass,Bass,Bass")
     }

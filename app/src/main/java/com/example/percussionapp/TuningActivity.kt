@@ -137,13 +137,10 @@ fun Tuner(engineVM: AudioEngineViewModel, waveform : DoubleArray, recording : Bo
     if (selectedTune == "Tune") {
         val highscore = sharedPreference.getString("Bass", "0")
         val parts = highscore?.split(",")
-        println("Bass - $parts")
         val highscore2 = sharedPreference.getString("Slap", "0")
         val parts2 = highscore2?.split(",")
-        println("Slap - $parts2")
         val highscore3 = sharedPreference.getString("Tone", "0")
         val parts3 = highscore3?.split(",")
-        println("Tone - $parts3")
     }
 
     var diffSlap = 0.0

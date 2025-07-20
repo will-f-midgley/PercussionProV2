@@ -86,17 +86,11 @@ fun updateComposeIcon(note : String) : Int {
 class ComposeActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.S)
-    //private var soundPoolBuilder: SoundPool.Builder = SoundPool.Builder()
     override fun onCreate(savedInstanceState: Bundle?) {
-        //soundPoolBuilder.setMaxStreams(5)
-        //val player = soundPoolBuilder.build()
-        println("beforetune")
-        //player.stop(stream)
         val tempIcon = Icons.Default.Info
         super.onCreate(savedInstanceState)
 
         //pass model to vm
-
 
         enableEdgeToEdge()
         setContent {
@@ -111,8 +105,6 @@ class ComposeActivity : ComponentActivity() {
                     eternalFile.writeText("None,None,None,None,None,None,None,None\nNone,None,None,None,None,None,None,None")
                 } else {
                 }
-                println("after")
-                //val eternalFile = File(externalDir, "custom.txt")
 
                 val testString = eternalFile.readLines()
 

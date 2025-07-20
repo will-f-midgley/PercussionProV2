@@ -50,7 +50,6 @@ class AnalyseActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PercussionAppTheme {
-                println("inanalysis")
                 val frequencySpectrum by mutableStateOf(recorderView.frequencySpectrum.observeAsState().value)
                 val recording by mutableStateOf(recorderView.detectorLoaded.observeAsState().value)
 
@@ -98,7 +97,10 @@ fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()
                 buttonText = "STOP"
                 iconRes = Icons.Default.Close
             }
-            Button(onClick = {startRecord()},
+            Button(onClick = {
+
+                startRecord()
+                             },
                 modifier = Modifier
                     .padding(innerPadding)
                     .padding(10.dp)){
