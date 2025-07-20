@@ -5,8 +5,6 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Environment
-import android.view.WindowMetrics
-import android.util.DisplayMetrics
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -50,8 +48,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,8 +60,8 @@ import com.example.percussionapp.ui.theme.VeryLightOrange
 import java.io.File
 
 
-public var bar1Image = arrayOf("Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass")
-public var bar2Image = arrayOf("Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap")
+var bar1Image = arrayOf("Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass")
+var bar2Image = arrayOf("Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap")
 
 
 fun getCustomArray(context: android.content.Context, barNum: Int) : Array<String> {
@@ -71,7 +69,7 @@ fun getCustomArray(context: android.content.Context, barNum: Int) : Array<String
 
     if (externalDir != null && !externalDir.exists()) {
         externalDir.mkdirs()
-        var eternalFile = File(externalDir, "custom.txt")
+        val eternalFile = File(externalDir, "custom.txt")
         eternalFile.writeText("Bass,Bass,Bass,Bass,Bass,Bass,Bass,Bass")
     }
     val eternalFile = File(externalDir, "custom.txt")
@@ -166,7 +164,6 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
     //println("inPracticeview")
     val notesPlayed by mutableStateOf(engineVM.notesPlayed.observeAsState().value)
     val waveform by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
-    val difference by mutableStateOf(engineVM.difference.observeAsState().value)
     val currentBar by mutableStateOf(engineVM.currentBar.observeAsState().value)
     val currentNote by mutableStateOf(engineVM.currentNote.observeAsState().value)
     //val currentBeat by mutableStateOf(engineVM.currentBeat.observeAsState().value)
@@ -284,15 +281,15 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
 
                     ) {
                         for (i in 0..7) {
-                            var note = bar2Image[i]
-                            val style = if (note == "Bass") {
+                            val note = bar2Image[i]
+                            val currentStyle = if (note == "Bass") {
                                 R.drawable.bass
                             } else if (note == "Slap") {
                                 R.drawable.slap
                             } else if (note == "Tone") {
                                 R.drawable.tone
                             } else (R.drawable.none)
-                            var notesImage = painterResource(style)
+                            val notesImage = painterResource(currentStyle)
                             Image(
                                 painter = notesImage,
                                 contentDescription = "res$i",
@@ -325,17 +322,12 @@ fun BarUpdate(currentBar: Int, barProgress:Animatable<Float, AnimationVector1D>,
               tempo: Int) {
     val context = LocalContext.current
     var bars by remember { mutableStateOf(0) }
-    var res1 = getSheetRes(style,1,context)
-    var res2 = getSheetRes(style,2,context)
-    val config = LocalConfiguration.current
-    val screenwidth = config.screenWidthDp
-    val screenheight = config.screenHeightDp
+    val res1 = getSheetRes(style,1,context)
+    val res2 = getSheetRes(style,2,context)
 
     //when starting, the barline will often move before the song has started - this removes it
     LaunchedEffect(currentBar) {
 
-        //println("width -- $screenwidth, height -- $screenheight")
-        //println("bars ------ $currentBar")
         bars++
         if (bars > 1) {
             barProgress.animateTo(0f, snap())

@@ -181,7 +181,6 @@ namespace percussionapp {
             float ampDiff = currentRMSAmplitude - prevRMSAmplitude;
 
             if (ampDiff > minPeakDifference) {
-                long long beforeTest = duration_cast<std::chrono::microseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 
                 long long noteTime = duration_cast<std::chrono::milliseconds>
                         (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
@@ -195,10 +194,6 @@ namespace percussionapp {
                         audioHandler->onSound(timer->checkNoteOnTime(0, noteTime));
                     }
                 }
-                long long afterTest = duration_cast<std::chrono::microseconds> (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-
-                LOG("Difference = %lld",afterTest - beforeTest);
-
             }
             prevRMSAmplitude = currentRMSAmplitude;
         }
