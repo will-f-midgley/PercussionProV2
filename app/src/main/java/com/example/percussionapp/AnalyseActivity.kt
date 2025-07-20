@@ -38,7 +38,6 @@ class AnalyseActivity : ComponentActivity() {
 
     @SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
     override fun onCreate(savedInstanceState: Bundle?) {
-
         realRecorder.initializeAssets(this.assets)
 
         super.onCreate(savedInstanceState)
@@ -64,17 +63,26 @@ class AnalyseActivity : ComponentActivity() {
 fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()->Unit){
 
     val arraySize = frequencySpectrum.size  - 1
-
+    val storedFreq = ArrayList<MutableSet<String>>()
     val spectrogram by remember{
         mutableStateOf(
             //200 columns visible on the screen at one time. 100 is a placeholder value
-            MutableList(200) { List(arraySize) { 100.0 } }
+            MutableList(200) { List(arraySize) { 200.0 } }
         )
     }
 
     //when the spectrum is updated, remove the leftmost column from the spectrogram and add the newest one
     LaunchedEffect(frequencySpectrum){
-        val processedWave = getLogFrequencies(frequencySpectrum ,arraySize)
+        val (processedWave, testSet) = getLogFrequencies(frequencySpectrum ,arraySize)
+
+        if (testSet.size > 0) { //println(testSet.size)
+            storedFreq += testSet
+            println(storedFreq.size)
+
+        } else if (storedFreq.size > 0) {
+            println("end note")
+            //storedFreq.clear()
+        }
         spectrogram.removeAt(0)
         spectrogram.add(processedWave.toList())
     }
@@ -88,7 +96,10 @@ fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()
                 buttonText = "STOP"
                 iconRes = Icons.Default.Close
             }
-            Button(onClick = {startRecord()},
+            Button(onClick = {
+
+                startRecord()
+                             },
                 modifier = Modifier
                     .padding(innerPadding)
                     .padding(10.dp)){
@@ -100,6 +111,7 @@ fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()
     }
 }
 
+// Function to display spectrogram
 @Composable
 fun Spectrogram(spectrogram: MutableList<List<Double>>){
     Canvas(modifier = Modifier.fillMaxSize().padding(20.dp).background(Color.hsv(300f,0.1f,0.85f))) {

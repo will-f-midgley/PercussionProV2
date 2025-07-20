@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="merengue1">
+        <item>Slap</item>
+        <item>None</item>
+        <item>None</item>
+        <item>Tone</item>
+        <item>Slap</item>
+        <item>None</item>
+        <item>Bass</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="merengue2">
+        <item>Bass</item>
+        <item>Bass</item>
+        <item>None</item>
+        <item>Tone</item>
+        <item>Slap</item>
+        <item>None</item>
+        <item>Bass</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="guaguanco1">
+        <item>None</item>
+        <item>Slap</item>
+        <item>Slap</item>
+        <item>Tone</item>
+        <item>None</item>
+        <item>Tone</item>
+        <item>Bass</item>
+        <item>Slap</item>
+    </string-array>
+    <string-array name="guaguanco2">
+        <item>Bass</item>
+        <item>None</item>
+        <item>Slap</item>
+        <item>Bass</item>
+        <item>None</item>
+        <item>Tone</item>
+        <item>Bass</item>
+        <item>Slap</item>
+    </string-array>
+    <string-array name="mozambique1">
+        <item>Bass</item>
+        <item>None</item>
+        <item>Slap</item>
+        <item>Bass</item>
+        <item>Bass</item>
+        <item>Bass</item>
+        <item>Bass</item>
+        <item>Slap</item>
+    </string-array>
+    <string-array name="mozambique2">
+        <item>None</item>
+        <item>Slap</item>
+        <item>Slap</item>
+        <item>Bass</item>
+        <item>Bass</item>
+        <item>Bass</item>
+        <item>Bass</item>
+        <item>Slap</item>
+    </string-array>
+    <string-array name="tumbao1">
+        <item>Tone</item>
+        <item>Tone</item>
+        <item>Slap</item>
+        <item>Tone</item>
+        <item>Tone</item>
+        <item>Tone</item>
+        <item>Bass</item>
+        <item>Bass</item>
+    </string-array>
+    <string-array name="tumbao2">
+        <item>Tone</item>
+        <item>Tone</item>
+        <item>Slap</item>
+        <item>Bass</item>
+        <item>Bass</item>
+        <item>Tone</item>
+        <item>Bass</item>
+        <item>Bass</item>
+    </string-array>
+    <string-array name="kassa1">
+        <item>Tone</item>
+        <item>Tone</item>
+        <item>Slap</item>
+        <item>Slap</item>
+        <item>None</item>
+        <item>None</item>
+        <item>Slap</item>
+        <item>Slap</item>
+    </string-array>
+    <string-array name="kassa2">
+        <item>Tone</item>
+        <item>Tone</item>
+        <item>Slap</item>
+        <item>Slap</item>
+        <item>Bass</item>
+        <item>None</item>
+        <item>Slap</item>
+        <item>Slap</item>
+    </string-array>
+</resources>

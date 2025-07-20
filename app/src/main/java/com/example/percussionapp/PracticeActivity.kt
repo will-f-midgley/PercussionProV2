@@ -1,6 +1,9 @@
 package com.example.percussionapp
 
 import android.app.Activity
+import android.content.Context
+import android.widget.EditText
+import android.content.SharedPreferences
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
@@ -46,7 +49,6 @@ import kotlinx.serialization.Serializable
 //val pathPrefix = Environment.getExternalStorageDirectory().absolutePath + "/recording"
 
 class PracticeActivity : ComponentActivity() {
-
     val recorderViewModel = AudioEngineViewModel()
     val realRecorder = KotlinAudioEngine()
 
@@ -82,7 +84,9 @@ class PracticeActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun Practice(recorderView: AudioEngineViewModel){
+
     PercussionAppTheme {
+        var x = 0
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val navController = rememberNavController()
 
@@ -131,6 +135,8 @@ fun Practice(recorderView: AudioEngineViewModel){
                             GenreButton({navController.navigate(SheetScreen(Genre.GUAGUANCO))},Genre.GUAGUANCO)
                             GenreButton({navController.navigate(SheetScreen(Genre.MERENGUE))},Genre.MERENGUE)
                             GenreButton({navController.navigate(SheetScreen(Genre.BOLERO))},Genre.BOLERO)
+                            GenreButton({navController.navigate(SheetScreen(Genre.KASSA))},Genre.KASSA)
+                            GenreButton({navController.navigate(SheetScreen(Genre.CUSTOM))},Genre.CUSTOM)
                         }
                     }
                 }
@@ -152,7 +158,9 @@ fun Practice(recorderView: AudioEngineViewModel){
                 (context as? Activity)?.requestedOrientation =
                     ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 Box(Modifier.fillMaxSize().background(VeryLightOrange))
+                x = x+1
                 PracticeView(recorderView, args.genre)
+                //println(x)
                 Column {
                     Spacer(Modifier.fillMaxHeight(0.8f))
                 }

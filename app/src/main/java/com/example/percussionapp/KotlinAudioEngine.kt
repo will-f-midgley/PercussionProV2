@@ -35,9 +35,11 @@ class KotlinAudioEngine : PercussionEngineInterface, DefaultLifecycleObserver {
         var notesPlayed: Int = 0
         var liveNotes: MutableLiveData<Int> = MutableLiveData(0)
         var currentNoteValue: MutableLiveData<Int> = MutableLiveData(-2)
+        var difference: MutableLiveData<Int> = MutableLiveData(0)
+        var currentBeatValue: MutableLiveData<Int> = MutableLiveData(0)
         var liveBar: MutableLiveData<Int> = MutableLiveData(0)
-        var liveWave: MutableLiveData<DoubleArray> = MutableLiveData(DoubleArray(1025) {0.0})
-        var spectrogram: MutableLiveData<List<List<Double>>> = MutableLiveData(MutableList(20) { List(1025) { 0.0 } })
+        var liveWave: MutableLiveData<DoubleArray> = MutableLiveData(DoubleArray(64) {0.0})
+        var spectrogram: MutableLiveData<List<List<Double>>> = MutableLiveData(MutableList(20) { List(64) { 0.0 } })
 
         //METHOD CAN BE CALLED BY C++ CODE AS IT IS IN COMPANION OBJECT
         @JvmStatic
@@ -70,6 +72,7 @@ class KotlinAudioEngine : PercussionEngineInterface, DefaultLifecycleObserver {
     }
 
 
+
     override fun onPause(owner: LifecycleOwner){
             // delete recorder if paused
         if (nativeObjectsExists){
@@ -99,6 +102,7 @@ class KotlinAudioEngine : PercussionEngineInterface, DefaultLifecycleObserver {
             createJNIObjects()
             return JNISendNote(type)
     }
+
 
     override suspend fun startPlayer(genre: Int) {
             createJNIObjects()
@@ -135,6 +139,11 @@ class KotlinAudioEngine : PercussionEngineInterface, DefaultLifecycleObserver {
     override suspend fun getNotesPlayed(): Int {
         createJNIObjects()
         return notesPlayed
+    }
+
+    override suspend fun getDifference(): Int {
+        createJNIObjects()
+        return difference.value!!
     }
 
     override suspend fun changeDifficulty(difficulty: Int) : Boolean{

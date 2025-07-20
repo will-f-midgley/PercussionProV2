@@ -35,13 +35,13 @@ namespace percussionapp {
         int numChannels = file.getNumChannels();
         bool isMono = file.isMono();
         bool isStereo = file.isStereo();
-        LOG("sampleRate: %d", sampleRate);
-        LOG("bitDepth: %d", bitDepth);
-        LOG("numSamples: %d", numSamples);
+        //LOG("sampleRate: %d", sampleRate);
+        //LOG("bitDepth: %d", bitDepth);
+        //LOG("numSamples: %d", numSamples);
         LOG("lengthInSeconds: %f", lengthInSeconds);
-        LOG("numChannels: %d", numChannels);
-        if (isMono) LOG("mono");
-        if (isStereo) LOG("stereo");
+        //LOG("numChannels: %d", numChannels);
+        //if (isMono) LOG("mono");
+        //if (isStereo) LOG("stereo");
     }
 
     bool Sample::isPlaying() const {
