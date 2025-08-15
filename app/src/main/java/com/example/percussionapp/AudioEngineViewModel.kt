@@ -20,8 +20,9 @@ class AudioEngineViewModel : ViewModel() {
     private val _notesPlayed by mutableStateOf(KotlinAudioEngine.liveNotes)
     private val _waveform by mutableStateOf(KotlinAudioEngine.liveWave)
     private val _currentBar by mutableStateOf(KotlinAudioEngine.liveBar)
+    private val _difference by mutableStateOf(KotlinAudioEngine.difference)
     private val _currentNote by mutableStateOf(KotlinAudioEngine.currentNoteValue)
-
+    private val _currentBeat by mutableStateOf(KotlinAudioEngine.currentBeatValue)
     private val _isRunning = MutableLiveData(false)
     private var _detectorLoaded = MutableLiveData(false)
     private val _playerLoaded = MutableLiveData(false)
@@ -56,6 +57,10 @@ class AudioEngineViewModel : ViewModel() {
     val currentBar : MutableLiveData<Int>
         get(){
             return _currentBar
+        }
+    val difference : MutableLiveData<Int>
+        get(){
+            return _difference
         }
 
     val currentNote : LiveData<Int>
@@ -117,6 +122,8 @@ class AudioEngineViewModel : ViewModel() {
 
     suspend fun soundDetected(){
         _notesPlayed.value = audioHandler?.getNotesPlayed()
+        _difference.value = 5
+
     }
 
     private fun updateRecordState(){

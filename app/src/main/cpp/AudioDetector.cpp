@@ -31,7 +31,7 @@ namespace percussionapp {
         builder.setSharingMode(oboe::SharingMode::Exclusive);
         builder.setFormat(oboe::AudioFormat::Float);
         builder.setChannelCount(1);
-        builder.setSampleRate(sampleRate); //48k
+        builder.setSampleRate(10000); //48k
         builder.setDirection(oboe::Direction::Input);
         builder.setFramesPerDataCallback(FRAMES_PER_CALLBACK);
         //builder.setCallback(reinterpret_cast<oboe::AudioStreamCallback *>(this));
@@ -181,7 +181,7 @@ namespace percussionapp {
             float ampDiff = currentRMSAmplitude - prevRMSAmplitude;
 
             if (ampDiff > minPeakDifference) {
-                //LOG("currentRMS %f",currentRMSAmplitude);
+
                 long long noteTime = duration_cast<std::chrono::milliseconds>
                         (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 

@@ -11,6 +11,7 @@ interface PercussionEngineInterface {
     suspend fun isRecording() : Boolean
     suspend fun isPlaying() : Boolean
     suspend fun getNotesPlayed() : Int
+    suspend fun getDifference() : Int
     suspend fun sendNote(type: Int) : Int
     suspend fun changeDifficulty(difficulty: Int) : Boolean
     suspend fun changeLatency(latency: Int) : Boolean

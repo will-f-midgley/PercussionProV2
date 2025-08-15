@@ -1,8 +1,10 @@
 package com.example.percussionapp
 
+
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Build
+import android.os.Environment
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -11,9 +13,6 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import android.os.Environment
-
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,24 +36,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import kotlin.io.path.exists
-import java.io.File
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,21 +57,23 @@ import com.example.percussionapp.ui.theme.LightOrange
 import com.example.percussionapp.ui.theme.PercussionAppTheme
 import com.example.percussionapp.ui.theme.StrongBrown
 import com.example.percussionapp.ui.theme.VeryLightOrange
+import java.io.File
 
-public var bar1Image = arrayOf("Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass")
-public var bar2Image = arrayOf("Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap")
+
+var bar1Image = arrayOf("Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass", "Bass")
+var bar2Image = arrayOf("Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap", "Slap")
+
 
 fun getCustomArray(context: android.content.Context, barNum: Int) : Array<String> {
     val externalDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+
     if (externalDir != null && !externalDir.exists()) {
         externalDir.mkdirs()
-        println("making file")
-        var eternalFile = File(externalDir, "custom.txt")
+        val eternalFile = File(externalDir, "custom.txt")
         eternalFile.writeText("Bass,Bass,Bass,Bass,Bass,Bass,Bass,Bass")
     }
     val eternalFile = File(externalDir, "custom.txt")
     val content = eternalFile.readLines()
-    println(content[barNum-1].split(","))
     return content[barNum-1].split(",").toTypedArray()
 }
 
@@ -90,6 +87,7 @@ fun getSheetRes(style: Genre, barNum: Int, context: android.content.Context) : A
             Genre.MOZAMBIQUE -> context.resources.getStringArray(R.array.mozambique1)
             Genre.BOLERO -> context.resources.getStringArray(R.array.merengue1)
             Genre.TUMBAO -> context.resources.getStringArray(R.array.tumbao1)
+            Genre.KASSA -> context.resources.getStringArray(R.array.kassa1)
             // res files cannot be modified so custom rhythms are stored and read from sharedPreferences instead.
             Genre.CUSTOM -> getCustomArray(context,barNum)
         }
@@ -100,6 +98,7 @@ fun getSheetRes(style: Genre, barNum: Int, context: android.content.Context) : A
             Genre.MOZAMBIQUE -> context.resources.getStringArray(R.array.mozambique2)
             Genre.BOLERO -> context.resources.getStringArray(R.array.merengue1)
             Genre.TUMBAO -> context.resources.getStringArray(R.array.tumbao2)
+            Genre.KASSA -> context.resources.getStringArray(R.array.kassa2)
             Genre.CUSTOM -> getCustomArray(context,barNum)
         }
     }
@@ -160,12 +159,14 @@ fun SpectrogramUpdate(waveform: DoubleArray,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
+
     val context = LocalContext.current
     //println("inPracticeview")
     val notesPlayed by mutableStateOf(engineVM.notesPlayed.observeAsState().value)
     val waveform by mutableStateOf(engineVM.frequencySpectrum.observeAsState().value)
     val currentBar by mutableStateOf(engineVM.currentBar.observeAsState().value)
     val currentNote by mutableStateOf(engineVM.currentNote.observeAsState().value)
+    //val currentBeat by mutableStateOf(engineVM.currentBeat.observeAsState().value)
     val playing by mutableStateOf(engineVM.playerLoaded.observeAsState().value)
     //these settings should realistically be in the C++ side and accesed via the VM
     //they are here temporarily, but when manipulation has to be done in native code they should be moved.
@@ -177,7 +178,6 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
     LaunchedEffect(metronome.value) { engineVM.toggleMetronome(metronome.value) }
     val tempo = remember { mutableIntStateOf(120) }
     LaunchedEffect(tempo.intValue) { engineVM.changeTempo(tempo.intValue) }
-
     val currentSpectrogramBitmap = remember {
         mutableStateOf(
             createScaledSpectrogramBitmap(
@@ -201,6 +201,7 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
     var settings by remember { mutableStateOf(false) }
     var info by remember { mutableStateOf(false) }
     val spectrogramOn = remember { mutableStateOf(false) }
+    val noteAudio = remember {mutableStateOf(false)}
     val barProgress = remember { Animatable(0f) }
 
     BarUpdate(currentBar!!,barProgress, style, tempo.intValue)
@@ -235,19 +236,23 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
             }
         }
     ) { innerPadding ->
-        Box(Modifier.fillMaxSize().background(VeryLightOrange))
+        Box(Modifier
+            .fillMaxSize()
+            .background(VeryLightOrange))
         //val imageModifier = Modifier.width(100.dp)
         if (settings && !info) {
             Box(
                 Modifier
-                    .padding(innerPadding).background(VeryLightOrange)
+                    .padding(innerPadding)
+                    .background(VeryLightOrange)
             ) {
-                SheetSettings(spectrogramOn, metronome, accuracy, latency,tempo)
+                SheetSettings(spectrogramOn, metronome, accuracy, latency,tempo, noteAudio)
             }
         } else if (info && !settings) {
             Box(
                 Modifier
-                    .padding(innerPadding).background(VeryLightOrange)
+                    .padding(innerPadding)
+                    .background(VeryLightOrange)
             ) {
                 NoteInfo()
             }
@@ -256,30 +261,35 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
             //
             Box(
                 Modifier
-                    .padding(innerPadding).padding(top = 20.dp)
+                    .padding(innerPadding)
+                    .padding(top = 20.dp)
             ) {
                 //var helpTextAlpha by remember{ mutableFloatStateOf(1f) } //remember{Animatable(1f)};
                 StartPracticeButton(engineVM,playing!!,style)
-                PercussionStave(barProgress.value, bar1Image,notesPlayed!!,currentNote!!)
+                PercussionStave(barProgress.value, bar1Image,notesPlayed!!,currentNote!!, noteAudio)
                 if(!spectrogramOn.value) {
                     Text("NEXT:", Modifier.offset(7.dp, 140.dp))
+                    Text("TIMING", Modifier.offset(610.dp, 200.dp))
+                    Text("HIT ACCURACY", Modifier.offset(735.dp, 200.dp))
                     //Text("Place your phone 10cm from your instrument", Modifier.alpha(helpTextAlpha).offset(200.dp, 140.dp))
 
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
-                        .fillMaxHeight(0.3f)
-                        .offset(30.dp, (160).dp)
+                            .fillMaxHeight(0.3f)
+                            .offset(30.dp, (160).dp)
 
                     ) {
                         for (i in 0..7) {
-                            var note = bar2Image[i]
-                            val style = if (note == "Bass") {
+                            val note = bar2Image[i]
+                            val currentStyle = if (note == "Bass") {
                                 R.drawable.bass
-                            } else {
+                            } else if (note == "Slap") {
                                 R.drawable.slap
-                            }
-                            var notesImage = painterResource(style)
+                            } else if (note == "Tone") {
+                                R.drawable.tone
+                            } else (R.drawable.none)
+                            val notesImage = painterResource(currentStyle)
                             Image(
                                 painter = notesImage,
                                 contentDescription = "res$i",
@@ -296,10 +306,10 @@ fun PracticeView(engineVM: AudioEngineViewModel, style: Genre) {
             }
             //
             Column {
-                Spacer(Modifier.fillMaxHeight(SHEET_MUSIC_HEIGHT))
+                Spacer(Modifier.fillMaxHeight(SHEET_MUSIC_HEIGHT/2))
                 TypeHit(waveform!!)
                 //spectrogram display
-                FreqCanvas(waveform!!,spectrogramOn.value, currentSpectrogramBitmap,lastSpectrogramBitmap,notesPlayed!!,currentNote!!)
+                //FreqCanvas(waveform!!,spectrogramOn.value, currentSpectrogramBitmap,lastSpectrogramBitmap,notesPlayed!!,currentNote!!)
 
             }
         }
@@ -312,13 +322,12 @@ fun BarUpdate(currentBar: Int, barProgress:Animatable<Float, AnimationVector1D>,
               tempo: Int) {
     val context = LocalContext.current
     var bars by remember { mutableStateOf(0) }
-    var res1 = getSheetRes(style,1,context)
-    var res2 = getSheetRes(style,2,context)
-
+    val res1 = getSheetRes(style,1,context)
+    val res2 = getSheetRes(style,2,context)
 
     //when starting, the barline will often move before the song has started - this removes it
     LaunchedEffect(currentBar) {
-        println("bars ------ $currentBar")
+
         bars++
         if (bars > 1) {
             barProgress.animateTo(0f, snap())
@@ -339,9 +348,12 @@ fun BarUpdate(currentBar: Int, barProgress:Animatable<Float, AnimationVector1D>,
 
 @Composable
 fun StartPracticeButton(engineVM: AudioEngineViewModel,playing:Boolean, style:Genre) {
+
     Row(Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.End){
         Button(
-            onClick = { engineVM.togglePlay(style)
+            onClick = {
+                totalHit = 0
+                engineVM.togglePlay(style)
                 engineVM.toggleRecord()
                 /*helpTextAlpha = 0f*/},
             modifier = Modifier.padding(end = 20.dp)

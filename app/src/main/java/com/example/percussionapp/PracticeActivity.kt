@@ -135,6 +135,7 @@ fun Practice(recorderView: AudioEngineViewModel){
                             GenreButton({navController.navigate(SheetScreen(Genre.GUAGUANCO))},Genre.GUAGUANCO)
                             GenreButton({navController.navigate(SheetScreen(Genre.MERENGUE))},Genre.MERENGUE)
                             GenreButton({navController.navigate(SheetScreen(Genre.BOLERO))},Genre.BOLERO)
+                            GenreButton({navController.navigate(SheetScreen(Genre.KASSA))},Genre.KASSA)
                             GenreButton({navController.navigate(SheetScreen(Genre.CUSTOM))},Genre.CUSTOM)
                         }
                     }
@@ -159,7 +160,7 @@ fun Practice(recorderView: AudioEngineViewModel){
                 Box(Modifier.fillMaxSize().background(VeryLightOrange))
                 x = x+1
                 PracticeView(recorderView, args.genre)
-                println(x)
+                //println(x)
                 Column {
                     Spacer(Modifier.fillMaxHeight(0.8f))
                 }

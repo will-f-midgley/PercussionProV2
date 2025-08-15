@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.percussionapp.ui.theme.PercussionAppTheme
-import java.io.File
 
 class AnalyseActivity : ComponentActivity() {
     private val recorderView = AudioEngineViewModel()
@@ -50,7 +49,6 @@ class AnalyseActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PercussionAppTheme {
-                println("inanalysis")
                 val frequencySpectrum by mutableStateOf(recorderView.frequencySpectrum.observeAsState().value)
                 val recording by mutableStateOf(recorderView.detectorLoaded.observeAsState().value)
 
@@ -65,7 +63,7 @@ class AnalyseActivity : ComponentActivity() {
 fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()->Unit){
 
     val arraySize = frequencySpectrum.size  - 1
-    var storedFreq = ArrayList<MutableSet<String>>()
+    val storedFreq = ArrayList<MutableSet<String>>()
     val spectrogram by remember{
         mutableStateOf(
             //200 columns visible on the screen at one time. 100 is a placeholder value
@@ -81,7 +79,7 @@ fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()
             storedFreq += testSet
             println(storedFreq.size)
 
-        } else if (testSet.size == 0 && storedFreq.size > 0) {
+        } else if (storedFreq.size > 0) {
             println("end note")
             //storedFreq.clear()
         }
@@ -98,7 +96,10 @@ fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()
                 buttonText = "STOP"
                 iconRes = Icons.Default.Close
             }
-            Button(onClick = {startRecord()},
+            Button(onClick = {
+
+                startRecord()
+                             },
                 modifier = Modifier
                     .padding(innerPadding)
                     .padding(10.dp)){
@@ -113,9 +114,9 @@ fun Analysis(frequencySpectrum: DoubleArray, recording: Boolean, startRecord: ()
 // Function to display spectrogram
 @Composable
 fun Spectrogram(spectrogram: MutableList<List<Double>>){
-    //Canvas(modifier = Modifier.fillMaxSize().padding(20.dp).background(Color.hsv(300f,0.1f,0.85f))) {
-        //val bitmap = createScaledSpectrogramBitmap(spectrogram,size.width,size.height)
-        //drawImage(image=bitmap.asImageBitmap())
-    //}
+    Canvas(modifier = Modifier.fillMaxSize().padding(20.dp).background(Color.hsv(300f,0.1f,0.85f))) {
+        val bitmap = createScaledSpectrogramBitmap(spectrogram,size.width,size.height)
+        drawImage(image=bitmap.asImageBitmap())
+    }
 }
 
